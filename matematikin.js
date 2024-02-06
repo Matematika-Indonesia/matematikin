@@ -1222,11 +1222,17 @@ function kocabuat(idtempatSVG="",intervalSumbuX=[],intervalSumbuY=[],opsi={}){
     let xMax = intervalSumbuX[1];
     let yMin = intervalSumbuY[0];
     let yMax = intervalSumbuY[1];
+    //rasio jarak antar tik
     let rTik = opsi.rTik || 1;
+    //rasio jarak antar tik sumbu x
     let rTikX = opsi.rTikX || rTik;
+    //rasio jarak antar tik sumbu y
     let rTikY = opsi.rTikY || rTik;
+    //Interval di sumbu x
     let intervalX = opsi.intervalX || 1;
+    //interval di sumbu y
     let intervalY = opsi.intervalY || 1;
+    //jarak antar tik real
     let jarakTik = opsi.jarakTik || 30;
     let jarakTikX = opsi.jarakTikX || jarakTik*intervalX;
     let jarakTikY = opsi.jarakTikY || jarakTik*intervalY;
@@ -1258,7 +1264,7 @@ function kocabuat(idtempatSVG="",intervalSumbuX=[],intervalSumbuY=[],opsi={}){
     if(xMax>0){
         banyakTikKanan = Math.floor(xMax/intervalX);
         lebarKanan = (Math.floor(xMax/intervalX)+1)*jarakTikX
-        batasKanan = (banyakTikKanan+1)*intervalX
+        //batasKanan = (banyakTikKanan+1)*intervalX
     }else{lebarKanan = jarakTikX;
     batasKanan = 1};
     let lebar = lebarKiri+lebarKanan;
@@ -1295,6 +1301,10 @@ function kocabuat(idtempatSVG="",intervalSumbuX=[],intervalSumbuY=[],opsi={}){
     }
     let skalaX = lebar/(batasKanan-batasKiri);
     let skalaY = tinggi/(batasAtas-batasBawah);
+    let tepiKiri = -lebarKiri*intervalX/jarakTikX;
+    let tepiKanan = lebarKanan*intervalX/jarakTikX;
+    let tepiBawah = -tinggiBawah*intervalY/jarakTikY;
+    let tepiAtas = tinggiAtas*intervalY/jarakTikY;
     document.getElementById(idtempatSVG).innerHTML = String.raw`<svg xmlns='http://www.w3.org/2000/svg' style='max-width: ${lebar+2*margin}px; max-height: ${tinggi+2*margin}px;' viewbox='${-margin} ${-margin} ${lebar+2*margin} ${tinggi+2*margin}'>
     <g id='${idtempatSVG}_svg'></g>
     ${svggaris([[0,tinggiAtas],[lebar,tinggiAtas]],{kepalapanah: {lebar: 10}})}
@@ -1303,7 +1313,7 @@ function kocabuat(idtempatSVG="",intervalSumbuX=[],intervalSumbuY=[],opsi={}){
     ${svglabeltitik([lebar,tinggiAtas],"X",{anchor: "end", baseline: "hanging",yplus: 8})}
     ${svglabeltitik([lebarKiri,0],"Y",{anchor: "end", baseline: "hanging",xplus: -8})}
     </svg>`
-    return {id: idtempatSVG+'_svg',sumbux: intervalSumbuX, sumbuy: intervalSumbuY,jarakTikX: jarakTikX,jarakTikY: jarakTikY,lebarKiri: lebarKiri, lebarKanan: lebarKanan, lebar: lebar,tinggiBawah: tinggiBawah, tinggiAtas: tinggiAtas,tinggi: tinggi,banyakTikKiri: banyakTikKiri, banyakTikKanan: banyakTikKanan, banyakTikBawah: banyakTikBawah, banyakTikAtas: banyakTikAtas, banyakTikX:banyakTikX, banyakTikY: banyakTikY,margin: margin, intervalX: intervalX, intervalY: intervalY, batasAtas: batasAtas, batasBawah:batasBawah, batasKanan:batasKanan, batasKiri:batasKiri,skalaX:skalaX,skalaY:skalaY}
+    return {id: idtempatSVG+'_svg',sumbux: intervalSumbuX, sumbuy: intervalSumbuY,jarakTikX: jarakTikX,jarakTikY: jarakTikY,lebarKiri: lebarKiri, lebarKanan: lebarKanan, lebar: lebar,tinggiBawah: tinggiBawah, tinggiAtas: tinggiAtas,tinggi: tinggi,banyakTikKiri: banyakTikKiri, banyakTikKanan: banyakTikKanan, banyakTikBawah: banyakTikBawah, banyakTikAtas: banyakTikAtas, banyakTikX:banyakTikX, banyakTikY: banyakTikY,margin: margin, intervalX: intervalX, intervalY: intervalY, batasAtas: batasAtas, batasBawah:batasBawah, batasKanan:batasKanan, batasKiri:batasKiri,skalaX:skalaX,skalaY:skalaY,tepiKiri:tepiKiri,tepiBawah:tepiBawah,tepiKanan:tepiKanan,tepiAtas:tepiAtas}
 }
 
 //koca Segmen
@@ -1316,10 +1326,10 @@ function kocaSegmen(variabelKoca,garis=[],opsi={}){
     let warna = opsi.warna || "black";
     let dash = opsi.dash || "";
     let tampakgaris = opsi.tampakgaris || 1;
-    document.getElementById(variabelKoca.id).innerHTML += String.raw`<line x1="${x1*variabelKoca.skalaX}" y1="${y1*variabelKoca.skalaY}"
-    x2="${x2*variabelKoca.skalaX}" y2="${y2*variabelKoca.skalaY}"
+    document.getElementById(variabelKoca.id).innerHTML += String.raw`<line x1="${variabelKoca.lebarKiri+variabelKoca.jarakTikX*x1/variabelKoca.intervalX}" y1="${variabelKoca.tinggiBawah+variabelKoca.jarakTikY*y1/variabelKoca.intervalY}"
+    x2="${variabelKoca.lebarKiri+variabelKoca.jarakTikX*x2/variabelKoca.intervalX}" y2="${variabelKoca.tinggiBawah+variabelKoca.jarakTikY*y2/variabelKoca.intervalY}"
     stroke="${warna}"
-    stroke-width="${tbl}" stroke-dasharray="${dash}" stroke-opacity="${tampakgaris}" transform="translate(${-variabelKoca.batasKiri*variabelKoca.jarakTikX/variabelKoca.intervalX} ${variabelKoca.batasAtas*variabelKoca.jarakTikY/variabelKoca.intervalY}) scale(1 -1)"/>`
+    stroke-width="${tbl}" stroke-dasharray="${dash}" stroke-opacity="${tampakgaris}" transform="translate(0,${variabelKoca.tinggi}) scale(1,-1)"/>`
     return {titik1: garis[0],titik2: garis[1],panjang: Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2))}
 }
 
@@ -1330,15 +1340,15 @@ function kocaLingkaran(variabelKoca,titikPusat=[],jarijari=0,opsi={}){
     let warnaGaris = opsi.warnaGaris || "black";
     let isi = opsi.isi || "none";
     let skala = opsi.skala || variabelKoca.lebar/(variabelKoca.batasKanan-variabelKoca.batasKiri);
-    let isikode = String.raw`<ellipse cx="${cx*variabelKoca.skalaX}" cy="${cy*variabelKoca.skalaY}" rx="${jarijari*variabelKoca.skalaX}" fill="${isi}" stroke="${warnaGaris}" ry="${jarijari*variabelKoca.skalaY}" transform="translate(${-variabelKoca.batasKiri*variabelKoca.jarakTikX/variabelKoca.intervalX} ${variabelKoca.batasAtas*variabelKoca.jarakTikY/variabelKoca.intervalY}) scale(1 -1)"  />`;
+    let isikode = String.raw`<ellipse cx="${variabelKoca.lebarKiri+variabelKoca.jarakTikX*cx/variabelKoca.intervalX}" cy="${variabelKoca.tinggiBawah+variabelKoca.jarakTikY*cy/variabelKoca.intervalY}" rx="${jarijari*variabelKoca.skalaX}" fill="${isi}" stroke="${warnaGaris}" ry="${jarijari*variabelKoca.skalaY}" transform="translate(0,${variabelKoca.tinggi}) scale(1,-1)"  />`;
     document.getElementById(variabelKoca.id).innerHTML += isikode;
 }
 
 //koca Segi Banyak
 function kocaSegi(variabelKoca,kumpulantitik=[],opsi={}){
-    let listtitik = `${kumpulantitik[0][0]*variabelKoca.skalaX},${kumpulantitik[0][1]*variabelKoca.skalaY} `;
+    let listtitik = `${variabelKoca.lebarKiri+variabelKoca.jarakTikX*kumpulantitik[0][0]/variabelKoca.intervalX},${variabelKoca.tinggiBawah+variabelKoca.jarakTikY*kumpulantitik[0][1]/variabelKoca.intervalY} `;
     for (var i = 1; i < kumpulantitik.length; i++) {
-        listtitik += String.raw`${kumpulantitik[i][0]*variabelKoca.skalaX},${kumpulantitik[i][1]*variabelKoca.skalaY} `;
+        listtitik += String.raw`${variabelKoca.lebarKiri+variabelKoca.jarakTikX*kumpulantitik[i][0]/variabelKoca.intervalX},${variabelKoca.tinggiBawah+variabelKoca.jarakTikY*kumpulantitik[i][1]/variabelKoca.intervalY} `;
       }
       let warnagaris = opsi.warnagaris || "black";
       let isi = opsi.isi || "none";
@@ -1346,7 +1356,7 @@ function kocaSegi(variabelKoca,kumpulantitik=[],opsi={}){
       let tampakgaris = opsi.tampakgaris || 1;
       let tebalgaris = opsi.tebalgaris || 1;
       let join = opsi.join || "miter";
-      document.getElementById(variabelKoca.id).innerHTML += String.raw`<polygon points="${listtitik}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; fill:${isi}; opacity:${transparanisi}; stroke-opacity:${tampakgaris}; stroke-linejoin:${join}" transform="translate(${-variabelKoca.batasKiri*variabelKoca.jarakTikX/variabelKoca.intervalX} ${variabelKoca.batasAtas*variabelKoca.jarakTikY/variabelKoca.intervalY}) scale(1 -1)"/>`;
+      document.getElementById(variabelKoca.id).innerHTML += String.raw`<polygon points="${listtitik}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; fill:${isi}; opacity:${transparanisi}; stroke-opacity:${tampakgaris}; stroke-linejoin:${join}" transform="translate(0,${variabelKoca.tinggi}) scale(1,-1)"/>`;
       return {kumpulantitik: kumpulantitik}
 }
 
@@ -1361,9 +1371,10 @@ function dfung(f,x,opsi={}){
 function kocaGrafung(variabelKoca,f,opsi={}){
     let metode = opsi.metode || 1;
     let iterasi = opsi.iterasi || 100;
-    let xterkecil = opsi.xterkecil || variabelKoca.batasKiri;
-    let xmax = opsi.xmax || variabelKoca.batasKanan;
+    let xterkecil = opsi.xterkecil || variabelKoca.tepiKiri;
+    let xmax = opsi.xmax || variabelKoca.tepiKanan;
     let tbl = opsi.tebalgaris || 1;
+    let warna = opsi.warna || "black"
     let delta = (xmax-xterkecil)/iterasi;
     let titikfungsi = [];
     let grad = [];
@@ -1388,23 +1399,23 @@ function kocaGrafung(variabelKoca,f,opsi={}){
             c2 = (y1+y2)/2;
         }
         titikKontrol.push([c1,c2])
-        titikKontrol2.push([(c1-variabelKoca.batasKiri)*variabelKoca.skalaX,(-c2+variabelKoca.batasAtas)*variabelKoca.skalaY])
+        titikKontrol2.push([(c1-variabelKoca.batasKiri),(-c2+variabelKoca.batasAtas)])
     }
     let titikfungsi2 = []
     for(let i=0;i<titikfungsi.length;i++){
         let x = titikfungsi[i][0];
         let y = titikfungsi[i][1];
-        titikfungsi2.push([(x-variabelKoca.batasKiri)*variabelKoca.skalaX,(-y+variabelKoca.batasAtas)*variabelKoca.skalaY])
+        titikfungsi2.push([variabelKoca.lebarKiri+variabelKoca.jarakTikX*x/variabelKoca.intervalX,variabelKoca.tinggiBawah+variabelKoca.jarakTikY*y/variabelKoca.intervalY])
     }
-    let kode = String.raw`M ${(xterkecil-variabelKoca.batasKiri)*variabelKoca.skalaX} ${(-f(xterkecil)+variabelKoca.batasAtas)*variabelKoca.skalaY} `;
+    let kode = String.raw`M ${variabelKoca.lebarKiri+variabelKoca.jarakTikX*xterkecil/variabelKoca.intervalX} ${variabelKoca.tinggiBawah+variabelKoca.jarakTikY*f(xterkecil)/variabelKoca.intervalY} `;
     let kode0 = kode;
     for(let i=0;i<iterasi;i++){
         kode+=String.raw`Q ${titikKontrol2[i][0]} ${titikKontrol2[i][1]} ${titikfungsi2[i+1][0]} ${titikfungsi2[i+1][1]}`;
         kode0+=String.raw`L ${titikfungsi2[i+1][0]} ${titikfungsi2[i+1][1]} `;
     }
-    if(metode==2){document.getElementById(variabelKoca.id).innerHTML += String.raw` <path d="${kode}" stroke="black" fill="transparent" stroke-width="${tbl}"/>`}
+    if(metode==2){document.getElementById(variabelKoca.id).innerHTML += String.raw` <path d="${kode}" stroke="${warna}" fill="transparent" stroke-width="${tbl}" transform="translate(${-variabelKoca.batasKiri*variabelKoca.jarakTikX/variabelKoca.intervalX} ${variabelKoca.batasAtas*variabelKoca.jarakTikY/variabelKoca.intervalY}) scale(1 -1)"/>`}
     else if(metode==1){
-        document.getElementById(variabelKoca.id).innerHTML += String.raw` <path d="${kode0}" stroke="black" fill="transparent" stroke-width="${tbl}"/>`
+        document.getElementById(variabelKoca.id).innerHTML += String.raw` <path d="${kode0}" stroke="${warna}" fill="transparent" stroke-width="${tbl}"  transform="translate(0,${variabelKoca.tinggi}) scale(1,-1)"/>`
     }
     
     return {titikfungsi: titikfungsi,xmin:xterkecil,xmax:xmax,grad:grad,titikKontrol:titikKontrol,titikfungsi2:titikfungsi2,delta:delta,titikKontrol2:titikKontrol2,metode:metode}
