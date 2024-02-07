@@ -1337,10 +1337,10 @@ function kocaLingkaran(variabelKoca,titikPusat=[],jarijari=0,opsi={}){
     let cx = titikPusat[0];
     let cy = titikPusat[1];
     let tebal = opsi.tebal || 1;
-    let warnaGaris = opsi.warnaGaris || "black";
+    let warnagaris = opsi.warnagaris || "black";
     let isi = opsi.isi || "none";
     let skala = opsi.skala || variabelKoca.lebar/(variabelKoca.batasKanan-variabelKoca.batasKiri);
-    let isikode = String.raw`<ellipse cx="${variabelKoca.lebarKiri+variabelKoca.jarakTikX*cx/variabelKoca.intervalX}" cy="${variabelKoca.tinggiBawah+variabelKoca.jarakTikY*cy/variabelKoca.intervalY}" rx="${jarijari*variabelKoca.skalaX}" fill="${isi}" stroke="${warnaGaris}" ry="${jarijari*variabelKoca.skalaY}" transform="translate(0,${variabelKoca.tinggi}) scale(1,-1)"  />`;
+    let isikode = String.raw`<ellipse cx="${variabelKoca.lebarKiri+variabelKoca.jarakTikX*cx/variabelKoca.intervalX}" cy="${variabelKoca.tinggiBawah+variabelKoca.jarakTikY*cy/variabelKoca.intervalY}" rx="${variabelKoca.jarakTikX*jarijari/variabelKoca.intervalX}" fill="${isi}" stroke="${warnagaris}" ry="${variabelKoca.jarakTikY*jarijari/variabelKoca.intervalY}" transform="translate(0,${variabelKoca.tinggi}) scale(1,-1)"  />`;
     document.getElementById(variabelKoca.id).innerHTML += isikode;
 }
 
@@ -1419,4 +1419,16 @@ function kocaGrafung(variabelKoca,f,opsi={}){
     }
     
     return {titikfungsi: titikfungsi,xmin:xterkecil,xmax:xmax,grad:grad,titikKontrol:titikKontrol,titikfungsi2:titikfungsi2,delta:delta,titikKontrol2:titikKontrol2,metode:metode}
+}
+
+//koca label titik
+function kocaLabelTitik(variabelKoca,titik=[],namalabel="",opsi={}){
+    let ukuran = opsi.ukuran || 1;
+    let anchor = opsi.anchor || "start";
+    let baseline = opsi.baseline || "auto";
+    let xplus = opsi.xplus || 0;
+    let yplus = opsi.yplus || 0;
+    let font = opsi.font || `'Times New Roman', Times, serif`
+    document.getElementById(variabelKoca.id).innerHTML += String.raw`<text x="${variabelKoca.lebarKiri+variabelKoca.jarakTikX*(titik[0]+xplus)/variabelKoca.intervalX}"  y="${variabelKoca.tinggi+-(variabelKoca.tinggiBawah+variabelKoca.jarakTikY*(titik[1]+yplus)/variabelKoca.intervalY)}" text-anchor="${anchor}" dominant-baseline="${baseline}" style="font-family:${font}; font-size:${ukuran}em">${namalabel}</text>`;
+    return {titik:titik,label:namalabel,ukuran:ukuran,font:font}
 }
