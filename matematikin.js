@@ -1432,3 +1432,78 @@ function kocaLabelTitik(variabelKoca,titik=[],namalabel="",opsi={}){
     document.getElementById(variabelKoca.id).innerHTML += String.raw`<text x="${variabelKoca.lebarKiri+variabelKoca.jarakTikX*(titik[0]+xplus)/variabelKoca.intervalX}"  y="${variabelKoca.tinggi+-(variabelKoca.tinggiBawah+variabelKoca.jarakTikY*(titik[1]+yplus)/variabelKoca.intervalY)}" text-anchor="${anchor}" dominant-baseline="${baseline}" style="font-family:${font}; font-size:${ukuran}em">${namalabel}</text>`;
     return {titik:titik,label:namalabel,ukuran:ukuran,font:font}
 }
+
+function geomBuat(id="",lebar=0,tinggi=0,opsi={}){
+    let rasio = opsi.rasio || 1;
+    let margin = opsi.margin || 0;
+    document.getElementById(id).innerHTML = String.raw`<svg id="${id}_svg" xmlns='http://www.w3.org/2000/svg' style='max-width: ${rasio*(lebar+2*margin)}px; max-height: ${rasio*(tinggi+2*margin)}px;' viewbox='${-rasio*margin} ${-rasio*margin} ${rasio*(lebar+2*margin)} ${rasio*(tinggi+2*margin)}'></svg>`;
+    return {id:id,lebar:lebar,tinggi:tinggi,rasio:rasio,margin:margin}
+}
+
+function geomSegmen(variabelGeom,kumTitik,opsi={}){
+    let titik1 = kumTitik[0];
+    let titik2 = kumTitik[1];
+    let x1 = titik1[0];
+    let y1 = titik1[1];
+    let x2 = titik2[0];
+    let y2 = titik2[1];
+    let warna = opsi.warna || "black";
+    let tbl = opsi.tebal || 1;
+    let dash = opsi.dash || "";
+    let tampakgaris = opsi.tampak || 1;
+    document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<line x1="${x1*variabelGeom.rasio}" y1="${y1*variabelGeom.rasio}"
+    x2="${x2*variabelGeom.rasio}" y2="${y2*variabelGeom.rasio}"
+    stroke="${warna}"
+    stroke-width="${tbl}" stroke-dasharray="${dash}" stroke-opacity="${tampakgaris}"/>`;
+}
+
+function geomSegi(variabelGeom,kumTitik,opsi={}){
+    let listtitik = `${kumTitik[0][0]*variabelGeom.rasio},${kumTitik[0][1]*variabelGeom.rasio} `;
+    for (var i = 1; i < kumTitik.length; i++) {
+        listtitik += String.raw`${kumTitik[i][0]*variabelGeom.rasio},${kumTitik[i][1]*variabelGeom.rasio} `;
+      }
+      let warnagaris = opsi.warnagaris || "black";
+      let isi = opsi.isi || "none";
+      let transparanisi = opsi.tampakisi || 1;
+      let tampakgaris = opsi.tampakgaris || 1;
+      let tebalgaris = opsi.tebalgaris || 1;
+      let join = opsi.join || "miter";
+    document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<polygon points="${listtitik}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; fill:${isi}; opacity:${transparanisi}; stroke-opacity:${tampakgaris}; stroke-linejoin:${join}"/>`;
+    return {kumTitik:kumTitik,warnagaris:warnagaris,isi:isi,tampakisi:transparanisi,tampakgaris:tampakgaris,tebalgaris:tebalgaris,join:join}
+}
+
+function geomSetengahLing(variabelGeom,titikPusat=[],titikAwal=[],opsi={}){
+    let xp = titikPusat[0];
+    let yp = titikPusat[1];
+    let x1 = titikAwal[0];
+    let y1 = titikAwal[1];
+    let radius = Math.sqrt(Math.pow(x1-xp,2)+Math.pow(y1-yp,2));
+    let x2 = 2*xp-x1;
+    let y2 = 2*yp-y1;
+    let busurbesar = opsi.busurbesar || 1;
+    let arahrotasi = opsi.arahrotasi || 1;
+    let tertutup = opsi.tertutup || 0;
+    let kodeTutup = "";
+    if(tertutup){
+        kodeTutup = "Z"
+    }
+    let warnagaris = opsi.warnagaris || "black";
+    let tebalgaris = opsi.tebalgaris || 1;
+    let isi = opsi.isi || "none";
+    let transparanisi = opsi.tampakisi || 1;
+    let tampakgaris = opsi.tampakgaris || 1;
+    let join = opsi.join || "mitter";
+    let isid = `M ${x1*variabelGeom.rasio} ${y1*variabelGeom.rasio} A ${radius*variabelGeom.rasio} ${radius*variabelGeom.rasio} ${busurbesar} ${arahrotasi} ${x2*variabelGeom.rasio} ${y2*variabelGeom.rasio} ${kodeTutup}`;
+    document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<path d="${isid}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; fill:${isi}; opacity:${transparanisi}; stroke-opacity:${tampakgaris}; stroke-linejoin:${join}"/>`;
+}
+
+function geomLabelTitik(variabelGeom,titik=[0,0],label="",opsi={}){
+    let ukuran = opsi.ukuran || 1;
+    let anchor = opsi.anchor || "start";
+    let baseline = opsi.baseline || "auto";
+    let xplus = opsi.xplus || 0;
+    let yplus = opsi.yplus || 0;
+    let warna = opsi.warna || "black"
+    document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<text x="${variabelGeom.rasio*(titik[0]+xplus)}"  y="${variabelGeom.rasio*(titik[1]+yplus)}" text-anchor="${anchor}" dominant-baseline="${baseline}" style="font-family:'Times New Roman', Times, serif; font-size:${ukuran}em; fill:${warna}">${label}</text>`;
+    return {titik:titik,label:label,ukuran:ukuran,warna:warna}
+}
