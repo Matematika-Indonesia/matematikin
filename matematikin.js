@@ -1455,6 +1455,7 @@ function geomSegmen(variabelGeom,kumTitik,opsi={}){
     x2="${x2*variabelGeom.rasio}" y2="${y2*variabelGeom.rasio}"
     stroke="${warna}"
     stroke-width="${tbl}" stroke-dasharray="${dash}" stroke-opacity="${tampakgaris}"/>`;
+    return {kumTitik:kumTitik,warna:warna,tebal:tbl}
 }
 
 function geomSegi(variabelGeom,kumTitik,opsi={}){
@@ -1506,4 +1507,29 @@ function geomLabelTitik(variabelGeom,titik=[0,0],label="",opsi={}){
     let warna = opsi.warna || "black"
     document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<text x="${variabelGeom.rasio*(titik[0]+xplus)}"  y="${variabelGeom.rasio*(titik[1]+yplus)}" text-anchor="${anchor}" dominant-baseline="${baseline}" style="font-family:'Times New Roman', Times, serif; font-size:${ukuran}em; fill:${warna}">${label}</text>`;
     return {titik:titik,label:label,ukuran:ukuran,warna:warna}
+}
+
+function geomLabelGaris(variabelGeom,kumTitik,label="",opsi={}){
+    let ukuran = opsi.ukuran || 1;
+    let anchor = opsi.anchor || "start";
+    let baseline = opsi.baseline || "auto";
+    let xplus = opsi.xplus || 0;
+    let yplus = opsi.yplus || 0;
+    let warna = opsi.warna || "black";
+    document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<text x="${variabelGeom.rasio*((kumTitik[0][0]+kumTitik[1][0])/2+xplus)}"  y="${variabelGeom.rasio*((kumTitik[0][1]+kumTitik[1][1])/2+yplus)}" text-anchor="${anchor}" dominant-baseline="${baseline}" style="font-family:'Times New Roman', Times, serif; font-size:${ukuran}em; fill:${warna}">${label}</text>`;
+    return {kumTitik:kumTitik,label:label}
+}
+
+function geomSudut(variabelGeom,kumTitik,opsi={}){
+    let r = opsi.r || 1;
+    let tebalgaris = opsi.tebalgaris || 1;
+    let warnagaris = opsi.warnagaris || "black";
+    let isi = opsi.isi || "none";
+    let tampakisi = opsi.tampakisi || 1;
+    let tampakgaris = opsi.tampakgaris || 1;
+    let rotasi = opsi.rotasi || 0;
+    let busurbesar = opsi.busurbesar || 0;
+    let arah = opsi.arah || 1;
+    document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<path d="M ${variabelGeom.rasio*kumTitik[1][0]} ${variabelGeom.rasio*kumTitik[1][1]} L ${variabelGeom.rasio*(kumTitik[1][0]+r*(kumTitik[0][0]-kumTitik[1][0])/panjanggaris([kumTitik[0],kumTitik[1]]))} ${variabelGeom.rasio*(kumTitik[1][1]+r*(kumTitik[0][1]-kumTitik[1][1])/panjanggaris([kumTitik[0],kumTitik[1]]))} A ${variabelGeom.rasio*r} ${variabelGeom.rasio*r} ${rotasi} ${busurbesar} ${arah} ${variabelGeom.rasio*(kumTitik[1][0]+r*(kumTitik[2][0]-kumTitik[1][0])/panjanggaris([kumTitik[2],kumTitik[1]]))} ${variabelGeom.rasio*(kumTitik[1][1]+r*(kumTitik[2][1]-kumTitik[1][1])/panjanggaris([kumTitik[2],kumTitik[1]]))} z" stroke="${warnagaris}" fill="${isi}" fill-opacity="${tampakisi}" stroke-width="${tebalgaris}" stroke-opacity="${tampakgaris}"/>`;
+    return {kumTitik:kumTitik,r:r,warnagaris:warnagaris,tebalgaris:tebalgaris,isi:isi,tampakisi:tampakisi,tampakgaris:tampakgaris,rotasi,rotasi,busurbesar:busurbesar,arah:arah}
 }
