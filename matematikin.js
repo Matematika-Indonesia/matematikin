@@ -1484,6 +1484,7 @@ function geomSetengahLing(variabelGeom,titikPusat=[],titikAwal=[],opsi={}){
     let busurbesar = opsi.busurbesar || 1;
     let arahrotasi = opsi.arahrotasi || 1;
     let tertutup = opsi.tertutup || 0;
+    let sweep = opsi.sweep || 1;
     let kodeTutup = "";
     if(tertutup){
         kodeTutup = "Z"
@@ -1496,6 +1497,7 @@ function geomSetengahLing(variabelGeom,titikPusat=[],titikAwal=[],opsi={}){
     let join = opsi.join || "mitter";
     let isid = `M ${x1*variabelGeom.rasio} ${y1*variabelGeom.rasio} A ${radius*variabelGeom.rasio} ${radius*variabelGeom.rasio} ${busurbesar} ${arahrotasi} ${x2*variabelGeom.rasio} ${y2*variabelGeom.rasio} ${kodeTutup}`;
     document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<path d="${isid}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; fill:${isi}; opacity:${transparanisi}; stroke-opacity:${tampakgaris}; stroke-linejoin:${join}"/>`;
+    return {titikPusat:titikPusat,r:radius}
 }
 
 function geomLabelTitik(variabelGeom,titik=[0,0],label="",opsi={}){
