@@ -631,6 +631,65 @@ const pilihacak = (arr, num = 1) => {
       }
   }
 
+  //Membuat Array bilangan menaik sampai tengah kemudian menurun sampai akhir
+  function buatArr(banyakBilangan, jumlah) {
+    if (banyakBilangan <= 0 || jumlah <= 0) {
+        throw new Error("banyakBilangan dan jumlah harus lebih besar dari 0");
+    }
+
+    let arr = [];
+    let rataRata = Math.floor(jumlah / banyakBilangan);
+    let sisa = jumlah % banyakBilangan;
+
+    // Mengisi array dengan nilai rata-rata
+    for (let i = 0; i < banyakBilangan; i++) {
+        arr.push(rataRata);
+    }
+
+    // Menambahkan sisa secara acak ke elemen-elemen dalam array
+    while (sisa > 0) {
+        let index = Math.floor(Math.random() * banyakBilangan);
+        arr[index]++;
+        sisa--;
+    }
+
+    // Memastikan hanya ada maksimal dua bilangan yang sama
+    let countMap = {};
+    for (let i = 0; i < banyakBilangan; i++) {
+        countMap[arr[i]] = (countMap[arr[i]] || 0) + 1;
+    }
+
+    for (let key in countMap) {
+        while (countMap[key] > 2) {
+            for (let i = 0; i < banyakBilangan; i++) {
+                if (arr[i] == key && countMap[key] > 2) {
+                    arr[i]++;
+                    countMap[key]--;
+                    countMap[arr[i]] = (countMap[arr[i]] || 0) + 1;
+                }
+            }
+        }
+    }
+
+    // Mengurutkan array dan memastikan selisih tidak terlalu jauh
+    arr.sort((a, b) => a - b);
+    for (let i = 1; i < arr.length; i++) {
+        if (arr[i] - arr[i - 1] > 1) {
+            let diff = arr[i] - arr[i - 1] - 1;
+            arr[i] -= diff;
+            arr[i - 1] += diff;
+        }
+    }
+
+    // Mengacak urutan elemen dalam array
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+
+    return arr;
+}
+  
   function svgawal(lebar=0,tinggi=0,rasio=1,margin=0){
     return String.raw`<svg xmlns='http://www.w3.org/2000/svg' style='max-width: ${rasio*(lebar+2*margin)}px; max-height: ${rasio*(tinggi+2*margin)}px;' viewbox='${-margin} ${-margin} ${lebar+2*margin} ${tinggi+2*margin}'>`;
   }
@@ -1471,6 +1530,18 @@ function geomSegi(variabelGeom,kumTitik,opsi={}){
       let join = opsi.join || "miter";
     document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<polygon points="${listtitik}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; fill:${isi}; opacity:${transparanisi}; stroke-opacity:${tampakgaris}; stroke-linejoin:${join}"/>`;
     return {kumTitik:kumTitik,warnagaris:warnagaris,isi:isi,tampakisi:transparanisi,tampakgaris:tampakgaris,tebalgaris:tebalgaris,join:join}
+}
+
+function geomLing(variabelGeom,titikPusat=[],jarijari=0,opsi={}){
+    let xp = titikPusat[0];
+    let yp = titikPusat[1];
+    let warnagaris = opsi.warnagaris || "black";
+    let tebalgaris = opsi.tebalgaris || 1;
+    let isi = opsi.isi || "none";
+    let transparanisi = opsi.tampakisi || 1;
+    let tampakgaris = opsi.tampakgaris || 1;
+    document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<circle r="${jarijari*variabelGeom.rasio}" cx="${xp*variabelGeom.rasio}" cy="${yp*variabelGeom.rasio}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; fill:${isi}; opacity:${transparanisi}; stroke-opacity:${tampakgaris};"/>`;
+    return {titikPusat:titikPusat,jarijari:jarijari}
 }
 
 function geomSetengahLing(variabelGeom,titikPusat=[],titikAwal=[],opsi={}){
