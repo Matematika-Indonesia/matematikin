@@ -1257,6 +1257,10 @@ function titikberat(titik1=[], titik2=[], titik3=[]) {
     return Math.round(faktorial(n) / (faktorial(r) * faktorial(n - r)));
 }
 
+function C(n,r){
+    return Math.round(faktorial(n) / (faktorial(r) * faktorial(n - r)));
+}
+
 //penjabaran faktorial n
 function jabarfakt(n) {
     let hasil = "";
@@ -1544,6 +1548,33 @@ function geomLing(variabelGeom,titikPusat=[],jarijari=0,opsi={}){
     return {titikPusat:titikPusat,jarijari:jarijari}
 }
 
+function geomBusur(variabelGeom,titikPusat=[],titikAwal=[],titikAkhir=[],opsi={}){
+    let xp = titikPusat[0];
+    let yp = titikPusat[1];
+    let x1 = titikAwal[0];
+    let y1 = titikAwal[1];
+    let radius = Math.sqrt(Math.pow(x1-xp,2)+Math.pow(y1-yp,2));
+    let x2 = titikAkhir[0];
+    let y2 = titikAkhir[1];
+    let busurbesar = opsi.busurbesar || 0;
+    let arahrotasi = opsi.arahrotasi || 0;
+    let tertutup = opsi.tertutup || 0;
+    let sweep = opsi.sweep || 0;
+    let kodeTutup = "";
+    if(tertutup){
+        kodeTutup = "Z"
+    }
+    let warnagaris = opsi.warnagaris || "black";
+    let tebalgaris = opsi.tebalgaris || 1;
+    let isi = opsi.isi || "none";
+    let transparanisi = opsi.tampakisi || 1;
+    let tampakgaris = opsi.tampakgaris || 1;
+    let join = opsi.join || "mitter";
+    let isid = `M ${x1*variabelGeom.rasio} ${y1*variabelGeom.rasio} A ${radius*variabelGeom.rasio} ${radius*variabelGeom.rasio} ${arahrotasi} ${busurbesar} ${sweep} ${x2*variabelGeom.rasio} ${y2*variabelGeom.rasio} ${kodeTutup}`;
+    document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<path d="${isid}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; fill:${isi}; opacity:${transparanisi}; stroke-opacity:${tampakgaris}; stroke-linejoin:${join}"/>`;
+    return {titikPusat:titikPusat,titikAwal:titikAwal,titikAkhir:titikAkhir,r:radius}
+}
+
 function geomSetengahLing(variabelGeom,titikPusat=[],titikAwal=[],opsi={}){
     let xp = titikPusat[0];
     let yp = titikPusat[1];
@@ -1606,3 +1637,25 @@ function geomSudut(variabelGeom,kumTitik,opsi={}){
     document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<path d="M ${variabelGeom.rasio*kumTitik[1][0]} ${variabelGeom.rasio*kumTitik[1][1]} L ${variabelGeom.rasio*(kumTitik[1][0]+r*(kumTitik[0][0]-kumTitik[1][0])/panjanggaris([kumTitik[0],kumTitik[1]]))} ${variabelGeom.rasio*(kumTitik[1][1]+r*(kumTitik[0][1]-kumTitik[1][1])/panjanggaris([kumTitik[0],kumTitik[1]]))} A ${variabelGeom.rasio*r} ${variabelGeom.rasio*r} ${rotasi} ${busurbesar} ${arah} ${variabelGeom.rasio*(kumTitik[1][0]+r*(kumTitik[2][0]-kumTitik[1][0])/panjanggaris([kumTitik[2],kumTitik[1]]))} ${variabelGeom.rasio*(kumTitik[1][1]+r*(kumTitik[2][1]-kumTitik[1][1])/panjanggaris([kumTitik[2],kumTitik[1]]))} z" stroke="${warnagaris}" fill="${isi}" fill-opacity="${tampakisi}" stroke-width="${tebalgaris}" stroke-opacity="${tampakgaris}"/>`;
     return {kumTitik:kumTitik,r:r,warnagaris:warnagaris,tebalgaris:tebalgaris,isi:isi,tampakisi:tampakisi,tampakgaris:tampakgaris,rotasi,rotasi,busurbesar:busurbesar,arah:arah}
 }
+
+function geomSiku(variabelGeom,kumTitik=[],opsi={}){
+    let r = opsi.r || 1;
+    let tebalgaris = opsi.tebalgaris || 1;
+    let warnagaris = opsi.warnagaris || "black";
+    let isi = opsi.isi || "none";
+    let tampakisi = opsi.tampakisi || 1;
+    let tampakgaris = opsi.tampakgaris || 1;
+    let ti1x = kumTitik[0][0];
+    let ti1y = kumTitik[0][1];
+    let ti2x = kumTitik[1][0];
+    let ti2y = kumTitik[1][1];
+    let ti3x = kumTitik[2][0];
+    let ti3y = kumTitik[2][1];
+    let pjg1 = panjanggaris([kumTitik[0],kumTitik[1]]);
+    let pjg2 = panjanggaris([kumTitik[2],kumTitik[1]]);
+    let tiawal = [ti2x+r*(ti1x-ti2x)/pjg1,ti2y+r*(ti1y-ti2y)/pjg1];
+    let tiakh = [ti2x+r*(ti3x-ti2x)/pjg2,ti2y+r*(ti3y-ti2y)/pjg2];
+    let titeng = [(tiawal[0]+tiakh[0])/2,(tiawal[1]+tiakh[1])/2];
+    let tilu = [2*titeng[0]-kumTitik[1][0],2*titeng[1]-kumTitik[1][1]]
+    document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<polygon points="${variabelGeom.rasio*ti2x},${variabelGeom.rasio*ti2y} ${variabelGeom.rasio*tiawal[0]},${variabelGeom.rasio*tiawal[1]} ${variabelGeom.rasio*tilu[0]},${variabelGeom.rasio*tilu[1]} ${variabelGeom.rasio*(kumTitik[1][0]+r*(kumTitik[2][0]-kumTitik[1][0])/panjanggaris([kumTitik[2],kumTitik[1]]))},${variabelGeom.rasio*(kumTitik[1][1]+r*(kumTitik[2][1]-kumTitik[1][1])/panjanggaris([kumTitik[2],kumTitik[1]]))}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; fill:${isi}; opacity:${tampakisi}; stroke-opacity:${tampakgaris}"/>`;
+  }
