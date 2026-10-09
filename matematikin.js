@@ -158,21 +158,6 @@ const primaKembarBerikutnya = (n) => {
     return NaN;
 };
 
-// function primaKuadratBerikutnya(n) returns:
-// * the smallest prime in the next prime quadruplet greater than n
-// * NaN if such a prime is not a representable integer
-
-function primaKuadratBerikutnya(n) {
-    if (isNaN(n) || !isFinite(n)) return NaN;
-    if (n < 11) return 11;
-    for (let i = 30 * Math.ceil(Math.floor(n - 10) / 30); i < 9007199254740880; i += 30) {
-        if (pscreen(i + 11) && pscreen(i + 13) && pscreen(i + 17) && pscreen(i + 19)
-            && cekPrima(i + 11) && cekPrima(i + 13) && cekPrima(i + 17) && cekPrima(i + 19))
-            return i + 11;
-    }
-    return NaN;
-}
-
 /**
  * Menentukan anggota pertama dari kelompok Bilangan Prima Kuadruplet 
  * (Prime Quadruplet) berikutnya yang bernilai lebih besar dari n.
@@ -478,10 +463,7 @@ const matriksKofaktor = (matriks) => {
             const tanda = ((i + j) % 2 === 0) ? 1 : -1;
 
             // Kalikan nilai minor dengan tanda
-            let kofaktor = nilai * tanda;
-
-            // Trik JavaScript: Bersihkan anomali angka -0 menjadi 0 murni
-            if (kofaktor === -0) kofaktor = 0;
+            let kofaktor = nilai * tanda + 0; // +0 untuk memastikan hasil tetap angka (bukan string)
 
             return kofaktor;
         });
@@ -589,11 +571,6 @@ const invers = (matriks) => {
     // Kalikan 1/det dengan setiap elemen di matriks Adjoin
     return adj.map(baris => baris.map(elemen => elemen / det));
 };
-
-function invMat2(matriks) {
-    let dete = determinan(matriks);
-    return [[fraksi(matriks[1][1], dete), fraksi(-matriks[0][1], dete)], [fraksi(-matriks[1][0], dete), fraksi(matriks[0][0], dete)]]
-}
 
 //Bentuk matriks
 /**
@@ -1249,7 +1226,13 @@ const arctan = (nilai) => {
 };
 
 //membuat tabel dari array
-function buattabelsoal(arr = [], tempattabel = "", opsi = {}) {
+const buattabelsoal = (arr = [], tempattabel = "", opsi = {}) => {
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+        throw new Error("MATEMATIKIN: buattabelsoal hanya dapat berjalan di lingkungan Browser.");
+    }
+    if (typeof QRCode === 'undefined') {
+         throw new Error("MATEMATIKIN: Library QRCode.js tidak ditemukan.");
+    }
     let bykbaris = arr.length;
     let bykkolom = arr[0].length;
     let teks = String.raw`<table class='w3-table-all tengah'>
@@ -1838,7 +1821,7 @@ const formatSatuan = (angka = 0, satuan = "") => {
 
     // Regex Cerdas: Mencari angka di ujung string dan menambahkan simbol pangkat LaTeX
     // Contoh: "cm2" -> "cm^{2}", "dm3" -> "dm^{3}"
-    const satuanBerpangkat = satuan.replace(/(\d+)$/, '^{$1}');
+    const satuanBerpangkat = satuan.replace(/([+-]?\d+)$/, '^{$1}');
 
     // \text{} digunakan agar huruf satuan berdiri tegak (tidak miring seperti variabel aljabar)
     return `${angkaRapi} \\text{ ${satuanBerpangkat}}`;
