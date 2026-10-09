@@ -1,3 +1,10 @@
+// ==========================================
+// KONSTANTA MATEMATIKIN
+// ==========================================
+const PI = Math.PI;               // 3.141592653589793
+const E = Math.E;                 // 2.718281828459045 (Bilangan Euler)
+const PHI = (1 + Math.sqrt(5)) / 2; // 1.6180339887... (Golden Ratio / Rasio Emas)
+
 const cekBulat = (n) => Number.isInteger(n);
 
 const cekBilKuadrat = (n) => typeof n === 'number' && n >= 0 && cekBulat(Math.sqrt(n));
@@ -1619,6 +1626,26 @@ const kombinasi = (n, r) => {
 const C = kombinasi;
 
 /**
+ * Menghitung Permutasi (nPr) - Banyaknya cara memilih r objek dari n objek dengan memperhatikan urutan.
+ */
+const permutasi = (n, r) => {
+    // Validasi Matematis
+    if (typeof n !== 'number' || typeof r !== 'number') return 0;
+    if (n < 0 || r < 0 || r > n) return 0;
+
+    // Eksekusi Iteratif (Lebih cepat dan aman dari faktorial rekursif)
+    let hasil = 1;
+    for (let i = 0; i < r; i++) {
+        hasil *= (n - i);
+    }
+
+    return Math.round(hasil);
+};
+
+// ALIAS untuk kemudahan pemanggilan
+const P = permutasi;
+
+/**
  * Menjabarkan perhitungan faktorial menjadi format string LaTeX.
  * Contoh output untuk n=4: "4 \cdot 3 \cdot 2 \cdot 1"
  */
@@ -1715,25 +1742,30 @@ const modus = (arr) => {
 };
 
 /**
+ * Menghitung Varians (Ragam) Populasi dari sekumpulan data.
+ */
+const varians = (arr) => {
+    if (!Array.isArray(arr) || arr.length === 0) return 0;
+    
+    const rataRata = mean(arr); // Memanggil fungsi mean Anda
+    const jumlahKuadratSelisih = arr.reduce((total, angka) => {
+        return total + Math.pow(angka - rataRata, 2);
+    }, 0);
+    
+    return bulatkanDesimal(jumlahKuadratSelisih / arr.length, 2);
+};
+
+// (Opsional) Refactor fungsi simpanganBaku Anda agar lebih DRY (Don't Repeat Yourself):
+// const simpanganBaku = (arr) => bulatkanDesimal(Math.sqrt(varians(arr)), 2);
+
+/**
  * Menghitung Simpangan Baku / Standar Deviasi (Populasi).
  * Sangat berguna untuk mengetahui seberapa jauh nilai menyimpang dari rata-rata kelas.
  */
 const simpanganBaku = (arr) => {
     if (!Array.isArray(arr) || arr.length < 2) return 0;
 
-    // 1. Cari nilai rata-rata (mean)
-    const rataRata = mean(arr);
-
-    // 2. Hitung jumlah kuadrat dari selisih setiap nilai dengan rata-rata
-    const jumlahKuadratSelisih = arr.reduce((total, angka) => {
-        return total + Math.pow(angka - rataRata, 2);
-    }, 0);
-
-    // 3. Cari Varians (Ragam)
-    const varians = jumlahKuadratSelisih / arr.length;
-
-    // 4. Simpangan baku adalah akar dari Varians
-    return bulatkanDesimal(Math.sqrt(varians), 2);
+    bulatkanDesimal(Math.sqrt(varians(arr)), 2);
 };
 
 /**
@@ -1884,3 +1916,57 @@ const dfung = (f, x, opsi = {}) => {
         throw new Error(`MATEMATIKIN [dfung]: Terjadi kesalahan saat mengevaluasi fungsi. Detail: ${error.message}`);
     }
 };
+
+/**
+ * Menghitung Modulo Sejati. Sangat penting untuk fungsi rotasi, 
+ * kriptografi, atau aritmetika jam yang melibatkan angka negatif.
+ */
+const mod = (n, m) => {
+    if (m === 0) throw new Error("MATEMATIKIN: Modulo (pembagi) tidak boleh nol.");
+    
+    // Rumus penawar sisa bagi negatif JavaScript
+    return ((n % m) + m) % m;
+};
+
+/**
+ * Mencari akar-akar persamaan kuadrat (ax^2 + bx + c = 0).
+ * Mengembalikan array [x1, x2]. Jika akar imajiner, mengembalikan array kosong [].
+ */
+const akarKuadrat = (a, b, c) => {
+    const D = diskriminan(a, b, c); // Memanggil fungsi Anda sebelumnya
+    
+    // Jika D < 0, akarnya imajiner/kompleks (tidak berpotongan dengan sumbu X)
+    if (D < 0) return []; 
+    
+    // Jika D = 0, akar kembar (x1 = x2)
+    if (D === 0) {
+        const x = -b / (2 * a);
+        // Hilangkan -0 akibat inakurasi floating point
+        return [x === -0 ? 0 : x]; 
+    }
+    
+    // Jika D > 0, dua akar nyata berbeda
+    const akarD = Math.sqrt(D);
+    const x1 = (-b + akarD) / (2 * a);
+    const x2 = (-b - akarD) / (2 * a);
+    
+    // Kembalikan akar dengan urutan dari yang terkecil ke terbesar
+    return [Math.min(x1, x2), Math.max(x1, x2)];
+};
+
+/**
+ * Mengubah satuan sudut dari Derajat ke Radian.
+ */
+const rad = (derajat) => {
+    if (typeof derajat !== 'number') return NaN;
+    return (derajat * PI) / 180;
+};
+
+/**
+ * Mengubah satuan sudut dari Radian ke Derajat.
+ */
+const derajat = (radian) => {
+    if (typeof radian !== 'number') return NaN;
+    return (radian * 180) / PI;
+};
+
