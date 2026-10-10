@@ -1,9 +1,14 @@
-function cekbulat(n){
-    return n==Math.round(n)
-};
-function cekBilKuadrat(n){
-    return cekbulat(Math.sqrt(n))
-}
+// ==========================================
+// KONSTANTA MATEMATIKIN
+// ==========================================
+const PI = Math.PI;               // 3.141592653589793
+const E = Math.E;                 // 2.718281828459045 (Bilangan Euler)
+const PHI = (1 + Math.sqrt(5)) / 2; // 1.6180339887... (Golden Ratio / Rasio Emas)
+
+const cekBulat = (n) => Number.isInteger(n);
+
+const cekBilKuadrat = (n) => typeof n === 'number' && n >= 0 && cekBulat(Math.sqrt(n));
+
 // Copyright (c) 2011 Alexei Kourbatov, www.JavaScripter.net 
 
 // function FaktorTerkecil(n) returns:
@@ -12,597 +17,1229 @@ function cekBilKuadrat(n){
 // *  0  if n is 0
 // *  1  if n=1, n=-1, or n is not an integer
 
-FaktorTerkecil = function(n) {
-    if (isNaN(n) || !isFinite(n)) return NaN;  
-    if (n==0) return 0;  
-    if (n%1 || n*n<2) return 1;
-    if (n%2==0) return 2;  
-    if (n%3==0) return 3;  
-    if (n%5==0) return 5;  
-    let m = Math.sqrt(n);
-    for (let i=7;i<=m;i+=30) {
-     if (n%i==0)      return i;
-     if (n%(i+4)==0)  return i+4;
-     if (n%(i+6)==0)  return i+6;
-     if (n%(i+10)==0) return i+10;
-     if (n%(i+12)==0) return i+12;
-     if (n%(i+16)==0) return i+16;
-     if (n%(i+22)==0) return i+22;
-     if (n%(i+24)==0) return i+24;
+const faktorPrimaTerkecil = (n) => {
+    // 1. Validasi awal: tolak jika bukan angka atau bernilai tak terhingga (Infinity)
+    if (typeof n !== 'number' || !Number.isFinite(n)) return NaN;
+
+    // 2. Gunakan nilai absolut agar fungsi tetap bekerja untuk bilangan negatif (misal -49 menjadi 49)
+    n = Math.abs(n);
+
+    // 3. Tolak angka desimal, dan atur batasan untuk 0 dan 1
+    if (!Number.isInteger(n) || n === 0) return 0;
+    if (n === 1) return 1;
+
+    // 4. Cek faktor prima dasar (2, 3, 5)
+    if (n % 2 === 0) return 2;
+    if (n % 3 === 0) return 3;
+    if (n % 5 === 0) return 5;
+
+    // 5. Wheel Factorization (Lompatan 30)
+    const m = Math.sqrt(n);
+    for (let i = 7; i <= m; i += 30) {
+        if (n % i === 0) return i;
+        if (n % (i + 4) === 0) return i + 4;
+        if (n % (i + 6) === 0) return i + 6;
+        if (n % (i + 10) === 0) return i + 10;
+        if (n % (i + 12) === 0) return i + 12;
+        if (n % (i + 16) === 0) return i + 16;
+        if (n % (i + 22) === 0) return i + 22;
+        if (n % (i + 24) === 0) return i + 24;
     }
+
+    // 6. Jika tidak bisa dibagi apapun, maka angka tersebut adalah bilangan prima itu sendiri
     return n;
-   }
-   
-   // Optimized version of FaktorTerkecil for Opera, Chrome, Firefox.
-   // In these browsers, "i divides n" is much faster as
-   // (q=n/i)==Math.floor(q)  than  n%i==0
-   if (
-       navigator.userAgent.indexOf('Opera')  !=-1
-    || navigator.userAgent.indexOf('Chrome') !=-1
-    || navigator.userAgent.indexOf('Firefox')!=-1 )
-   {
-    FaktorTerkecil = function(n) {
-     if (isNaN(n) || !isFinite(n)) return NaN;   
-     if (n==0) return 0;  
-     if (n%1 || n*n<2) return 1;
-     if (n%2==0) return 2;  
-     if (n%3==0) return 3;  
-     if (n%5==0) return 5;  
-     let q, m = Math.sqrt(n);
-     for (let i=7;i<=m;i+=30) {
-      if ((q=n/i)==Math.floor(q))      return i;
-      if ((q=n/(i+4))==Math.floor(q))  return i+4;
-      if ((q=n/(i+6))==Math.floor(q))  return i+6;
-      if ((q=n/(i+10))==Math.floor(q)) return i+10;
-      if ((q=n/(i+12))==Math.floor(q)) return i+12;
-      if ((q=n/(i+16))==Math.floor(q)) return i+16;
-      if ((q=n/(i+22))==Math.floor(q)) return i+22;
-      if ((q=n/(i+24))==Math.floor(q)) return i+24;
-     }
-     return n;
-    }
-   }
-   
-   // Optimized version for Internet Explorer avoids IE's 
-   // "slow script" warning at 5000000 script statements
-   // by grouping 48 divisibility checks into a single statement
-   
-   if (navigator.userAgent.indexOf('MSIE')!=-1)
-   {
-    FaktorTerkecil = function(n){
-     if (isNaN(n)) return NaN;  
-     if (n==0) return 0;  
-     if (!isFinite(n) || n%1 || n*n<2) return 1;
-     if (n%2==0) return 2;  
-     if (n%3==0) return 3;  
-     if (n%5==0) return 5;  
-     if (n%7==0) return 7;  
-     let m = Math.sqrt(n);
-     for (let i=11;i<=m;i+=210) {
-      if (n%i && n%(i+2) && n%(i+6) && n%(i+8)&& n%(i+12)&& n%(i+18)&& n%(i+20)&& n%(i+26)
-      && n%(i+30) && n%(i+32) && n%(i+36) && n%(i+42) && n%(i+48) && n%(i+50) && n%(i+56)
-      && n%(i+60) && n%(i+62) && n%(i+68) && n%(i+72) && n%(i+78) && n%(i+86)
-      && n%(i+90) && n%(i+92) && n%(i+96) && n%(i+98) && n%(i+102)&& n%(i+110)&& n%(i+116)
-      && n%(i+120)&& n%(i+126)&& n%(i+128)&& n%(i+132)&& n%(i+138)&& n%(i+140)&& n%(i+146)
-      && n%(i+152)&& n%(i+156)&& n%(i+158)&& n%(i+162)&& n%(i+168)&& n%(i+170)&& n%(i+176)
-      && n%(i+180)&& n%(i+182)&& n%(i+186)&& n%(i+188)&& n%(i+198)&& n%(i+200)
-      ) continue;
-      for (let j=0;j<210;j+=2) {if (n%(i+j)==0) return i+j; }
-     }
-     return n;
-    }
-   }
-   
-   // function cekPrima(n) returns:
-   // - false if n is NaN or not a finite integer
-   // - true  if n is prime
-   // - false otherwise
-   
-   cekPrima = function(n) {
-    if (isNaN(n) || !isFinite(n) || n%1 || n<2) return false; 
-    if (n==FaktorTerkecil(n)) return true;
-    return false;
-   }
-   
-   // function faktor(n) returns:
-   // * a string containing the prime factorization of n
-   // * n.toString() if the factrization cannot be found
-   
-   function faktor(n){
-    if (isNaN(n) || !isFinite(n) || n%1 || n==0) return n.toString();
-    if (n<0) return '-'+faktor(-n);
-    let minFactor = FaktorTerkecil(n);
-    if (n==minFactor) return n.toString();
-    return minFactor+'*'+faktor(n/minFactor);
-   }
-   
-   // function primaBerikutnya(n) returns:
-   // * the smallest prime greater than n
-   // * NaN if this prime is not a representable integer
-   
-   function primaBerikutnya(n){
-    if (isNaN(n) || !isFinite(n)) return NaN; 
-    if (n<2) return 2;
-    n = Math.floor(n);
-    for (let i=n+n%2+1; i<9007199254740992; i+=2) {
-     if (cekPrima(i)) return i;
-    }
-    return NaN;
-   }
-   
-   // function primaKembarBerikutnya(n) returns:
-   // * 2 if n<2 or
-   // * 3 if n<3 or
-   // * 5 if n<5 or
-   // * the smallest twin prime 6i-1 greater than n, for an integer i
-   // * NaN if such a prime is not a representable integer
-   
-   function primaKembarBerikutnya(n) {
-    if (isNaN(n) || !isFinite(n)) return NaN; 
-    if (n<2) return 2;
-    if (n<3) return 3;
-    if (n<5) return 5;
-    for (let i=6*Math.ceil(Math.floor(n+2)/6); i<9007199254740880; i+=6) {
-     if (pscreen(i-1) && pscreen(i+1) && cekPrima(i-1) && cekPrima(i+1))
-       return i-1;
-    }
-    return NaN;
-   }
-   
-   // function primaKuadratBerikutnya(n) returns:
-   // * the smallest prime in the next prime quadruplet greater than n
-   // * NaN if such a prime is not a representable integer
-   
-   function primaKuadratBerikutnya(n) {
-    if (isNaN(n) || !isFinite(n)) return NaN; 
-    if (n<11) return 11;
-    for (let i=30*Math.ceil(Math.floor(n-10)/30); i<9007199254740880; i+=30) {
-     if (pscreen(i+11) && pscreen(i+13) && pscreen(i+17) && pscreen(i+19)
-      && cekPrima(i+11) && cekPrima(i+13) && cekPrima(i+17) && cekPrima(i+19))
-       return i+11;
-    }
-    return NaN;
-   }
-   
-   function pscreen(n) {
-    if (n<=19 || n%3 && n%5 && n%7 && n%11 && n%13 && n%17 && n%19) return true;
-    return false;
-   }
-
-   function pembagi(n) {
-    if (n < 1)
-        throw "Argument error";
-    let small = [];
-    let large = [];
-    let end = Math.floor(Math.sqrt(n));
-    for (let i = 1; i <= end; i++) {
-        if (n % i == 0) {
-            small.push(i);
-            if (i * i != n)  // Don't include a square root twice
-                large.push(n / i);
-        }
-    }
-    large.reverse();
-    return small.concat(large);
-}
-
-function faktorial(n){
-    if(n==0){
-        return 1
-    }else{
-        return n*faktorial(n-1)
-    }
 };
 
-function primeFactorList(n) {
-    if (n < 1)
-        throw "Argument error";
-    let result = [];
-    while (n != 1) {
-        let factors = FaktorTerkecil(n);
-        result.push(factors);
-        n /= factors;
+
+
+// function cekPrima(n) returns:
+// - false if n is NaN or not a finite integer
+// - true  if n is prime
+// - false otherwise
+
+const cekPrima = (n) => {
+    // 1. Tolak otomatis jika bukan bilangan bulat, atau jika kurang dari 2
+    if (!Number.isInteger(n) || n < 2) {
+        return false;
     }
-    return result;
-}
 
-function fpb2(x, y) {
-    if ((typeof x !== 'number') || (typeof y !== 'number')) 
-      return false;
-    x = Math.abs(x);
-    y = Math.abs(y);
-    while(y) {
-      let t = y;
-      y = x % y;
-      x = t;
+    // 2. Kembalikan hasil perbandingan (true jika sama, false jika beda)
+    return n === faktorPrimaTerkecil(n);
+};
+
+// function faktorisasiPrima(n) returns:
+// * a string containing the prime factorization of n
+// * n.toString() if the factrization cannot be found
+
+const faktorisasiPrima = (n) => {
+    // 1. Validasi: tolak jika bukan bilangan bulat, atau jika nilainya 0, 1, atau -1
+    if (!Number.isInteger(n) || n === 0 || Math.abs(n) === 1) {
+        return n.toString();
     }
-    return x;
-  }
 
-  function fpb (a) {
-    return a.reduce(fpb2)
-  }
-
-  function kpk2(a,b){
-      return (a*b)/fpb2(a,b)
-  }
-  function kpk(x){
-      return x.reduce(kpk2)
-  }
-  function FaktorBilKuadrat(n){
-      let indeksFaktorBilKuadrat = Math.floor(Math.sqrt(n));
-      while (indeksFaktorBilKuadrat>1) {
-          let m2 = n%Math.pow(indeksFaktorBilKuadrat,2);
-          if(m2==0){
-              break;
-          }else{indeksFaktorBilKuadrat--}
-      }
-      return indeksFaktorBilKuadrat;
-  }
-
-  function diskriminan(a,b,c){
-      return b*b-4*a*c
-  }
-  
-  //memilih bilangan bulat dari 0 hingga n
-  function bilbulacak(n){
-      return Math.floor(Math.random()*n)
-  }
-
-//determinan matriks
-function det2(a11,a12,a21,a22){
-    return a11*a22-a12*a21
-}
-
-function minorsebagian(matriks=[],baris=1,kolom=1){
-    let hasil = JSON.parse(JSON.stringify(matriks));
-    hasil.splice(baris-1,1);
-    for(let i=0;i<hasil.length;i++){
-        hasil[i].splice(kolom-1,1);
+    // 2. Tangani bilangan negatif secara rekursif
+    if (n < 0) {
+        return `-${faktorisasiPrima(-n)}`;
     }
+
+    // 3. Dapatkan faktor prima terkecil
+    const minFactor = faktorPrimaTerkecil(n);
+
+    // 4. Base case (Berhenti jika n adalah bilangan prima itu sendiri)
+    if (n === minFactor) {
+        return n.toString();
+    }
+
+    // 5. Rangkai string menggunakan Template Literals dan lanjutkan rekursi
+    return `${minFactor}*${faktorisasiPrima(n / minFactor)}`;
+};
+
+// function primaBerikutnya(n) returns:
+// * the smallest prime greater than n
+// * NaN if this prime is not a representable integer
+
+const primaBerikutnya = (n) => {
+    // 1. Validasi tipe data dan pastikan nilainya terhingga
+    if (typeof n !== 'number' || !Number.isFinite(n)) {
+        return NaN;
+    }
+
+    // 2. Bilangan prima terkecil adalah 2
+    if (n < 2) {
+        return 2;
+    }
+
+    // 3. Bulatkan ke bawah untuk menangani input desimal (misal 2.5 menjadi 2)
+    n = Math.floor(n);
+
+    // 4. Tentukan titik mulai (selalu cari bilangan ganjil berikutnya)
+    // Jika n=2 (genap) -> 2 + 0 + 1 = 3
+    // Jika n=3 (ganjil) -> 3 + 1 + 1 = 5
+    const nilaiAwal = n + (n % 2) + 1;
+
+    // 5. Looping hanya mengecek bilangan ganjil sampai batas aman integer JavaScript
+    for (let i = nilaiAwal; i <= Number.MAX_SAFE_INTEGER; i += 2) {
+        if (cekPrima(i)) {
+            return i;
+        }
+    }
+
+    // 6. Mengembalikan NaN jika tidak ditemukan dalam batas aman
+    return NaN;
+};
+
+/**
+ * Menentukan anggota terkecil dari pasangan Bilangan Prima Kembar (Twin Primes) 
+ * berikutnya yang bernilai lebih besar dari n.
+ * * Pasangan prima kembar adalah dua bilangan prima yang memiliki selisih tepat 2 
+ * (contoh: 3 & 5, 5 & 7, 11 & 13).
+ * Algoritma ini menggunakan sifat matematis di mana semua bilangan prima 
+ * (selain 2 dan 3) pasti terletak di sekitar kelipatan 6 (yaitu 6k - 1 dan 6k + 1).
+ */
+const primaKembarBerikutnya = (n) => {
+    // 1. Validasi tipe data dan batas terhingga
+    if (typeof n !== 'number' || !Number.isFinite(n)) {
+        return NaN;
+    }
+
+    // 2. Tangani kasus dasar (Pasangan Prima Kembar terkecil adalah 3 & 5)
+    // Jika n kurang dari 3, anggota kembar terkecil berikutnya adalah 3
+    if (n < 3) return 3;
+    // Jika n kurang dari 5, anggota kembar terkecil berikutnya adalah 5
+    if (n < 5) return 5;
+
+    // 3. Bulatkan nilai n ke bawah agar aman dari angka desimal
+    n = Math.floor(n);
+
+    // 4. Cari titik mulai pada kelipatan 6 terdekat
+    const nilaiAwal = 6 * Math.ceil((n + 2) / 6);
+
+    // 5. Looping dengan lompatan 6
+    for (let i = nilaiAwal; i <= Number.MAX_SAFE_INTEGER; i += 6) {
+        // Cek apakah angka sebelum (i-1) dan sesudah (i+1) kelipatan 6 adalah prima
+        if (cekPrima(i - 1) && cekPrima(i + 1)) {
+            return i - 1; // Mengembalikan anggota terkecil dari pasangan tersebut
+        }
+    }
+
+    return NaN;
+};
+
+/**
+ * Menentukan anggota pertama dari kelompok Bilangan Prima Kuadruplet 
+ * (Prime Quadruplet) berikutnya yang bernilai lebih besar dari n.
+ * * * Prima Kuadruplet adalah konstelasi empat bilangan prima berdekatan 
+ * dengan jarak tetap yaitu {p, p+2, p+6, p+8}.
+ * * Semua kuadruplet (kecuali yang dimulai dengan angka 5) secara matematis 
+ * selalu berada pada posisi {30k+11, 30k+13, 30k+17, 30k+19}.
+ */
+const primaKuadrupletBerikutnya = (n) => {
+    // 1. Validasi tipe data dan pastikan nilainya terhingga
+    if (typeof n !== 'number' || !Number.isFinite(n)) {
+        return NaN;
+    }
+
+    // 2. Tangani basis kasus untuk kuadruplet spesial pertama dan kedua
+    // Kuadruplet terkecil di dunia matematika adalah {5, 7, 11, 13}
+    if (n < 5) return 5;
+    // Kuadruplet kedua adalah {11, 13, 17, 19}
+    if (n < 11) return 11;
+
+    // 3. Bulatkan ke bawah agar aman dari input desimal
+    n = Math.floor(n);
+
+    // 4. Hitung titik mulai kelipatan 30. 
+    // Rumus ini memastikan i + 11 akan selalu lebih besar dari n
+    const nilaiAwal = 30 * Math.ceil((n - 10) / 30);
+
+    // 5. Looping pencarian dengan lompatan 30
+    for (let i = nilaiAwal; i <= Number.MAX_SAFE_INTEGER; i += 30) {
+        // Cek keempat titik kuadruplet. 
+        // Karena fungsi cekPrima sudah menggunakan Wheel Factorization yang sangat cepat,
+        // kita tidak perlu lagi menggunakan fungsi bantuan pscreen().
+        if (
+            cekPrima(i + 11) &&
+            cekPrima(i + 13) &&
+            cekPrima(i + 17) &&
+            cekPrima(i + 19)
+        ) {
+            return i + 11; // Kembalikan angka pertama dari kuadruplet yang ditemukan
+        }
+    }
+
+    // Mengembalikan NaN jika tidak ditemukan dalam batas komputasi JavaScript
+    return NaN;
+};
+
+const faktorial = (n) => {
+    // 1. Validasi yang sama kuatnya
+    if (typeof n !== 'number' || !Number.isInteger(n) || n < 0) {
+        return NaN;
+    }
+
+    if (n === 0 || n === 1) return 1;
+
+    // 2. Gunakan perulangan (looping) alih-alih rekursi
+    let hasil = 1;
+    for (let i = 2; i <= n; i++) {
+        hasil *= i;
+    }
+
     return hasil;
-}
+};
 
-function det(matriks=[]){
-    if(matriks.length==2){
-       return matriks[0][0]*matriks[1][1]-matriks[0][1]*matriks[1][0]
-    }else{
-       let a=[];
-       let hasil=0;
-       for(let i=0;i<matriks[0].length;i++){
-          a[i]=Math.pow(-1,i)*matriks[0][i];
-          hasil+=a[i]*minor(matriks,1,i+1);
-       }
-       return hasil;
+const daftarFaktorPrima = (n) => {
+    // 1. Validasi standar MATEMATIKIN
+    if (typeof n !== 'number' || !Number.isInteger(n) || n < 1) {
+        throw new Error("Input harus berupa bilangan bulat positif (>= 1)");
     }
- }
 
-function minor(matriks=[],baris=1,kolom=1){
-    return det(minorsebagian(matriks,baris,kolom));
-}
-
-function matriksminor(matriks=[]){
+    // 2. Siapkan array kosong untuk menampung hasil
     let hasil = [];
-    for(let i=0;i<matriks.length;i++){
-        hasil[i]=[];
-        for(let k=0;k<matriks.length;k++){
-            hasil[i][k]=minor(matriks,i+1,k+1)
-        }
-    }
-    return hasil;
-}
 
-function matrikskofaktor(matriks=[]){
-    let hasil = matriksminor(matriks);
-    for(let i=0;i<hasil.length;i++){
-        for(let j=0;j<hasil.length;j++){
-            hasil[i][j]=Math.pow(-1,i+j)*hasil[i][j]
-        }
-    }
-    return hasil;
-}
+    // 3. Eksekusi pencarian berulang (looping)
+    while (n !== 1) {
+        // Panggil fungsi faktorPrimaTerkecil yang sudah kita buat sebelumnya
+        let faktor = faktorPrimaTerkecil(n);
 
-function transpose(matriks=[]){
-    let hasil = [];
-    for(let i=0;i<matriks[0].length;i++){
-        hasil[i]=[];
-        for(let j=0;j<matriks.length;j++){
-            hasil[i][j]=matriks[j][i]
-        }
-    }
-    return hasil;
-}
+        // Masukkan faktor yang ditemukan ke dalam array
+        hasil.push(faktor);
 
-function adjoin(matriks=[]){
-    let hasil = []
-    if(matriks.length==2){
-        hasil = [[matriks[1][1],-matriks[0][1]],[-matriks[1][0],matriks[0][0]]]
-    }else{hasil = transpose(matrikskofaktor(matriks))}
-    return hasil;
-}
+        // Bagi n dengan faktor tersebut untuk melanjutkan pencarian
+        n /= faktor;
+    }
 
-function kalimatriks(matriksatauskalar,matriks){
-    let hasil = []
-    if(Array.isArray(matriksatauskalar)){
-        for(let i=0;i<matriksatauskalar.length;i++){
-            hasil[i]=[]
-            for(let j=0;j<matriks[0].length;j++){
-                hasil[i][j]=0;
-                for(let k=0;k<matriksatauskalar[0].length;k++)
-                hasil[i][j]+=matriksatauskalar[i][k]*matriks[k][j]
-            }
-        };
+    return hasil;
+};
+
+// ==========================================
+// FUNGSI HELPER (Tidak dipanggil oleh user)
+// ==========================================
+
+const _fpbDuaAngka = (a, b) => {
+    // Ubah ke nilai absolut untuk menangani angka negatif
+    a = Math.abs(a);
+    b = Math.abs(b);
+
+    // Algoritma Euclidean super cepat
+    while (b !== 0) {
+        let sisa = a % b;
+        a = b;
+        b = sisa;
     }
-    if(typeof matriksatauskalar=="number"){
-        hasil = JSON.parse(JSON.stringify(matriks));
-        for(let i=0;i<hasil.length;i++){
-            for(let j=0;j<hasil[0].length;j++){
-                hasil[i][j]=matriksatauskalar*hasil[i][j]
-            }
+    return a;
+};
+
+const _kpkDuaAngka = (a, b) => {
+    // KPK yang melibatkan angka 0 selalu 0
+    if (a === 0 || b === 0) return 0;
+
+    // Rumus mutlak: (A x B) / FPB
+    return Math.abs(a * b) / _fpbDuaAngka(a, b);
+};
+
+
+// ==========================================
+// FUNGSI UTAMA MATEMATIKIN (Bisa diekspor)
+// ==========================================
+
+const fpb = (...angka) => {
+    // Deteksi otomatis: apakah user memasukkan Array fpb([12,24]) 
+    // atau parameter berjejer fpb(12, 24, 36)
+    const deretAngka = Array.isArray(angka[0]) ? angka[0] : angka;
+
+    // Cegah error jika input kosong
+    if (deretAngka.length === 0) return NaN;
+
+    // Validasi ketat: semua angka wajib bilangan bulat
+    if (!deretAngka.every(n => typeof n === 'number' && Number.isInteger(n))) {
+        throw new Error("MATEMATIKIN: Semua input FPB harus berupa bilangan bulat.");
+    }
+
+    // Terapkan reduce menggunakan helper
+    return deretAngka.reduce((hasilSementara, n) => _fpbDuaAngka(hasilSementara, n));
+};
+
+const kpk = (...angka) => {
+    const deretAngka = Array.isArray(angka[0]) ? angka[0] : angka;
+
+    if (deretAngka.length === 0) return NaN;
+
+    if (!deretAngka.every(n => typeof n === 'number' && Number.isInteger(n))) {
+        throw new Error("MATEMATIKIN: Semua input KPK harus berupa bilangan bulat.");
+    }
+
+    return deretAngka.reduce((hasilSementara, n) => _kpkDuaAngka(hasilSementara, n));
+};
+
+const faktorKuadratTerbesar = (n) => {
+    // 1. Validasi: Pastikan input adalah bilangan bulat positif yang valid
+    if (typeof n !== 'number' || !Number.isInteger(n) || n < 1) {
+        return NaN;
+    }
+
+    // 2. Tentukan titik mulai dari akar kuadrat tertinggi yang mungkin
+    let k = Math.floor(Math.sqrt(n));
+
+    // 3. Looping menurun untuk mencari faktor kuadrat terbesar pertama yang cocok
+    while (k > 1) {
+        // Menggunakan (k * k) jauh lebih cepat daripada Math.pow(k, 2)
+        if (n % (k * k) === 0) {
+            break; // Langsung berhenti begitu ditemukan
         }
+        k--; // Kurangi nilai k jika belum membagi habis
     }
-    return hasil
-}
-function matriksinvers(matriks=[]){
-    let hasil = adjoin(matriks);
-    for(let i=0;i<hasil.length;i++){
-        for(let j=0;j<hasil.length;j++){
-            hasil[i][j] = hasil[i][j]/det(matriks)
+
+    // 4. Mengembalikan nilai akar dari faktor kuadrat tersebut (atau 1 jika tidak ada)
+    return k;
+};
+
+const diskriminan = (a, b, c) => {
+    // 1. Validasi: Pastikan semua input adalah angka (termasuk desimal, karena koefisien bisa berupa desimal)
+    if (typeof a !== 'number' || typeof b !== 'number' || typeof c !== 'number') {
+        return NaN;
+    }
+
+    // 2. Validasi nilai terhingga
+    if (!Number.isFinite(a) || !Number.isFinite(b) || !Number.isFinite(c)) {
+        return NaN;
+    }
+
+    // 3. Syarat mutlak persamaan kuadrat: 'a' tidak boleh 0
+    if (a === 0) {
+        throw new Error("MATEMATIKIN: Nilai koefisien 'a' tidak boleh 0 pada persamaan kuadrat.");
+    }
+
+    // 4. Eksekusi rumus D = b^2 - 4ac
+    return (b * b) - (4 * a * c);
+};
+
+//memilih bilangan bulat dari 0 hingga n
+const bilBulatAcak = (n) => {
+    // 1. Validasi: Pastikan input adalah angka dan tidak bernilai negatif
+    if (typeof n !== 'number' || !Number.isFinite(n) || n < 0) {
+        return NaN;
+    }
+
+    // 2. Bulatkan n ke bawah untuk berjaga-jaga jika ada input desimal
+    n = Math.floor(n);
+
+    // 3. Kalikan dengan (n + 1) agar rentang acaknya mencakup angka n
+    return Math.floor(Math.random() * (n + 1));
+};
+
+/**
+ * Menghitung determinan dari sebuah matriks persegi (N x N)
+ * Menggunakan metode Ekspansi Kofaktor sepanjang baris pertama
+ */
+const determinan = (matriks) => {
+    // 1. Validasi: Pastikan input adalah array dan tidak kosong
+    if (!Array.isArray(matriks) || matriks.length === 0) {
+        throw new Error("MATEMATIKIN: Input harus berupa matriks (array 2D).");
+    }
+
+    const n = matriks.length;
+
+    // 2. Validasi: Pastikan matriks berbentuk persegi (N x N)
+    const isPersegi = matriks.every(baris => Array.isArray(baris) && baris.length === n);
+    if (!isPersegi) {
+        throw new Error("MATEMATIKIN: Matriks harus berbentuk persegi (jumlah baris = jumlah kolom).");
+    }
+
+    // 3. Basis Kasus (Base Cases) untuk menghentikan rekursi
+    if (n === 1) {
+        return matriks[0][0]; // Determinan matriks 1x1 adalah angkanya itu sendiri
+    }
+    if (n === 2) {
+        // Rumus matriks 2x2: (ad - bc)
+        return (matriks[0][0] * matriks[1][1]) - (matriks[0][1] * matriks[1][0]);
+    }
+
+    // 4. Ekspansi Kofaktor untuk matriks 3x3 ke atas
+    let hasil = 0;
+
+    // Kita selalu melakukan ekspansi sepanjang baris pertama (indeks 0)
+    for (let i = 0; i < n; i++) {
+        // Tentukan tanda: genap = positif, ganjil = negatif
+        // Ini jauh lebih cepat daripada menggunakan Math.pow(-1, i)
+        const tanda = (i % 2 === 0) ? 1 : -1;
+
+        // Buat sub-matriks secara fungsional (Sangat Cepat & Hemat Memori)
+        const subMatriks = matriks
+            .slice(1) // Ambil semua baris di bawah baris pertama
+            .map(baris => baris.filter((_, indeksKolom) => indeksKolom !== i)); // Hapus kolom ke-i
+
+        // Eksekusi rekursi dan tambahkan ke total hasil
+        hasil += tanda * matriks[0][i] * determinan(subMatriks);
+    }
+
+    return hasil;
+};
+
+/**
+ * Menghasilkan Matriks Minor dari sebuah matriks persegi.
+ * Setiap elemen pada posisi (i, j) digantikan oleh determinan sub-matriks
+ * setelah baris ke-i dan kolom ke-j dihilangkan.
+ */
+const matriksMinor = (matriks) => {
+    // 1. Validasi Matriks Persegi
+    if (!Array.isArray(matriks) || matriks.length === 0) {
+        throw new Error("MATEMATIKIN: Input harus berupa matriks (array 2D).");
+    }
+    const n = matriks.length;
+    const isPersegi = matriks.every(baris => Array.isArray(baris) && baris.length === n);
+    if (!isPersegi) {
+        throw new Error("MATEMATIKIN: Matriks harus berbentuk persegi untuk mencari minor.");
+    }
+
+    // 2. Kasus Khusus Matriks 1x1
+    // Secara definisi matematis standar, minor dari matriks 1x1 dianggap 1
+    if (n === 1) {
+        return [[1]];
+    }
+
+    // 3. Proses Pembentukan Matriks Minor
+    // Menggunakan dua lapis .map() untuk iterasi baris (i) dan kolom (j)
+    return matriks.map((baris, i) => {
+        return baris.map((_, j) => {
+
+            // a. Ciptakan sub-matriks (coret baris ke-i dan kolom ke-j)
+            const subMatriks = matriks
+                .filter((_, indeksBaris) => indeksBaris !== i) // Buang baris ke-i
+                .map(b => b.filter((_, indeksKolom) => indeksKolom !== j)); // Buang kolom ke-j
+
+            // b. Hitung determinan dari sub-matriks tersebut dan jadikan nilai elemen baru
+            return determinan(subMatriks);
+        });
+    });
+};
+
+/**
+ * Menghasilkan Matriks Kofaktor dari sebuah matriks persegi.
+ * Merupakan hasil kali elemen Matriks Minor dengan pola tanda (-1)^(i+j).
+ */
+const matriksKofaktor = (matriks) => {
+    // 1. Dapatkan matriks minor menggunakan fungsi yang sudah kita buat sebelumnya
+    const minor = matriksMinor(matriks);
+
+    // 2. Modifikasi setiap elemen dengan pola tanda (checkerboard pattern)
+    return minor.map((baris, i) => {
+        return baris.map((nilai, j) => {
+
+            // Penentuan tanda: Jika jumlah indeks (i+j) genap = 1, jika ganjil = -1
+            const tanda = ((i + j) % 2 === 0) ? 1 : -1;
+
+            // Kalikan nilai minor dengan tanda
+            let kofaktor = nilai * tanda + 0; // +0 untuk memastikan hasil tetap angka (bukan string)
+
+            return kofaktor;
+        });
+    });
+};
+
+/**
+ * Melakukan Transpose pada matriks (mengubah baris menjadi kolom dan sebaliknya).
+ * Mendukung matriks persegi (N x N) maupun persegi panjang (M x N).
+ */
+const transpose = (matriks) => {
+    // 1. Validasi: Pastikan input adalah matriks (array 2D) yang valid dan tidak kosong
+    if (!Array.isArray(matriks) || matriks.length === 0 || !Array.isArray(matriks[0])) {
+        throw new Error("MATEMATIKIN: Input harus berupa matriks (array 2D) yang tidak kosong.");
+    }
+
+    // 2. Proses Transpose dengan pendekatan fungsional
+    // matriks[0].map(...) -> Iterasi berdasarkan jumlah kolom yang ada
+    return matriks[0].map((_, indeksKolom) => {
+
+        // matriks.map(...) -> Ambil nilai dari setiap baris pada posisi indeksKolom
+        return matriks.map(baris => baris[indeksKolom]);
+
+    });
+};
+
+/**
+ * Menghasilkan Matriks Adjoin (Adjugate) dari sebuah matriks persegi.
+ * Adjoin adalah transpose dari matriks kofaktor.
+ */
+const adjoin = (matriks) => {
+    // 1. Validasi Input
+    if (!Array.isArray(matriks) || matriks.length === 0) {
+        throw new Error("MATEMATIKIN: Input harus berupa matriks yang valid.");
+    }
+
+    const n = matriks.length;
+
+    // 2. Optimasi untuk Matriks 2x2 (Rumus Cepat)
+    // Ini jauh lebih cepat daripada menghitung minor, kofaktor, lalu transpose.
+    if (n === 2) {
+        return [
+            [matriks[1][1], -matriks[0][1]],
+            [-matriks[1][0], matriks[0][0]]
+        ];
+    }
+
+    // 3. Rumus Umum untuk Matriks 3x3 ke atas
+    // Adjoin(A) = Transpose(Kofaktor(A))
+    return transpose(matriksKofaktor(matriks));
+};
+
+/**
+ * Melakukan operasi perkalian pada matriks.
+ * Mendukung dua mode:
+ * 1. Skalar x Matriks (a dikali M)
+ * 2. Matriks x Matriks (A dikali B)
+ */
+const kaliMatriks = (pengali, matriks) => {
+    // 1. MODE PERKALIAN SKALAR (Skalar x Matriks)
+    if (typeof pengali === 'number') {
+        if (!Array.isArray(matriks) || matriks.length === 0) {
+            throw new Error("MATEMATIKIN: Parameter kedua harus berupa matriks.");
         }
+        // Kalikan setiap elemen matriks dengan skalar menggunakan .map()
+        return matriks.map(baris => baris.map(elemen => pengali * elemen));
     }
-    return hasil
-}
+
+    // 2. MODE PERKALIAN MATRIKS (Matriks x Matriks)
+    if (Array.isArray(pengali) && Array.isArray(matriks)) {
+        const barisA = pengali.length;
+        const kolomA = pengali[0].length;
+        const barisB = matriks.length;
+        const kolomB = matriks[0].length;
+
+        // Validasi Syarat Mutlak Perkalian Matriks
+        if (kolomA !== barisB) {
+            throw new Error("MATEMATIKIN: Jumlah kolom matriks pertama harus sama dengan jumlah baris matriks kedua.");
+        }
+
+        // Proses Perkalian Matriks dengan gaya fungsional (Sangat Elegan)
+        return pengali.map(baris =>
+            // Iterasi sepanjang jumlah kolom matriks B
+            matriks[0].map((_, j) =>
+                // Kalkulasi Dot Product (Baris A x Kolom B)
+                baris.reduce((total, elemenA, k) => total + (elemenA * matriks[k][j]), 0)
+            )
+        );
+    }
+
+    // Jika input tidak dikenali
+    throw new Error("MATEMATIKIN: Tipe data pengali tidak valid (harus angka atau matriks).");
+};
+
+const invers = (matriks) => {
+    const det = determinan(matriks);
+
+    // Jika determinan adalah 0, matriks tidak memiliki invers (singular)
+    if (det === 0) {
+        throw new Error("MATEMATIKIN: Matriks tidak memiliki invers karena determinannya 0.");
+    }
+
+    const adj = adjoin(matriks);
+
+    // Kalikan 1/det dengan setiap elemen di matriks Adjoin
+    return adj.map(baris => baris.map(elemen => elemen / det));
+};
 
 //Bentuk matriks
-function bentukMatriks(matriks=[]){
-    let hasil = String.raw`\begin{pmatrix}`;
-    for (let i = 0; i < matriks.length; i++) {
-        for (let j = 0; j < matriks[0].length; j++) {
-            hasil += matriks[i][j]
-            if (j!=matriks[0].length-1) {
-                hasil += String.raw`&`
-            }
-        }
-        if (i!=matriks.length-1) {
-            hasil+=String.raw`\\`
-        }else{hasil+=String.raw`\end{pmatrix}`}
+/**
+ * Mengubah array 2D matriks menjadi string kode LaTeX format pmatrix.
+ * Sangat ideal untuk menjembatani output data dengan visualizer (seperti MathJax).
+ */
+const bentukMatriks = (matriks) => {
+    // 1. Validasi: Pastikan input valid agar tidak error saat di-map
+    if (!Array.isArray(matriks) || matriks.length === 0) return "";
+
+    // 2. Eksekusi penggabungan string
+    const isiLatex = matriks
+        .map(baris => baris.join(' & ')) // Gabungkan tiap elemen baris dengan ' & '
+        .join(' \\\\ ');                 // Gabungkan hasil tiap baris dengan ' \\ '
+
+    // 3. Rangkai dengan template literal (backtick) standar
+    return `\\begin{pmatrix} ${isiLatex} \\end{pmatrix}`;
+};
+
+/**
+ * Menjumlahkan serangkaian angka.
+ * Mendukung input berupa array ( misal: [1, 2, 3] ) 
+ * maupun parameter berjejer ( misal: 1, 2, 3 ).
+ */
+const jumlah = (...angka) => {
+    // 1. Deteksi apakah input berupa array atau angka berjejer
+    const deretAngka = Array.isArray(angka[0]) ? angka[0] : angka;
+
+    // 2. Kembalikan 0 jika tidak ada angka yang dimasukkan
+    if (deretAngka.length === 0) return 0;
+
+    // 3. Validasi ketat: Pastikan semua elemen adalah angka terhingga (bukan teks/NaN)
+    if (!deretAngka.every(n => typeof n === 'number' && Number.isFinite(n))) {
+        throw new Error("MATEMATIKIN: Semua elemen yang dijumlahkan harus berupa angka yang valid.");
     }
-    return hasil;
-}
 
- function jumlah2(a,b){
-    return a+b;
-  }
-  function jumlah(n){
-    return n.reduce(jumlah2)
-  }
+    // 4. Eksekusi penjumlahan dengan reduce dan nilai awal 0
+    return deretAngka.reduce((akumulator, nilaiSaatIni) => akumulator + nilaiSaatIni, 0);
+};
 
-  function jumlahkuadrat2(a=0,b=0){
-      return a*a+b*b
-  }
+/**
+ * Menghitung jumlah kuadrat dari serangkaian angka.
+ * Mendukung input berupa array maupun parameter berjejer.
+ */
+const jumlahKuadrat = (...angka) => {
+    // 1. Fleksibilitas input (mendukung array tunggal atau angka berjejer)
+    const deretAngka = Array.isArray(angka[0]) ? angka[0] : angka;
 
-  function jumlahkuadrat(x=[]){
-      return x.reduce(jumlahkuadrat2)
-  }
+    // 2. Kembalikan 0 jika tidak ada input
+    if (deretAngka.length === 0) return 0;
 
-  function panjangvektor(vektor=[]){
-      let pjg=0;
-      for(let i=0;i<vektor.length;i++){
-          pjg+=vektor[i]*vektor[i]
-      }
-      return Math.sqrt(pjg);
-  }
-
-  function dotvektor(vektor1,vektor2){
-      let hasil = 0;
-      for(let i=0;i<vektor1.length;i++){
-          hasil+=vektor1[i]*vektor2[i]
-      }
-      return hasil;
-  }
-
-  function crossvektor(vektor1,vektor2){
-      let matriksSementara = [];
-      matriksSementara[0]=[1,-1,1];
-      matriksSementara[1]=vektor1;
-      matriksSementara[2]=vektor2;
-      let hasil = [];
-      for(let i=0;i<3;i++){
-        hasil[i]=Math.pow(-1,i)*minor(matriksSementara,1,i+1);
-      }
-      return hasil;
-  }
-
-  function proyvekt(vektorasal,vektortuju){
-      let konst = dotvektor(vektorasal,vektortuju)/Math.pow(panjangvektor(vektortuju),2);
-      let hasil = vektortuju.slice(0);
-      for(let i=0;i<vektortuju.length;i++){
-          hasil[i]=konst*hasil[i]
-      }
-      return hasil
-  }
-
-  function sederhanakanAkar(n){
-      let a;
-      let b;
-      let c;
-      let d;
-      let list=[];
-      if(cekBilKuadrat(n)){
-          a=Math.sqrt(n);
-          b="";
-          c="";
-          d="";
-      }
-      else{
-          a = Math.floor(Math.sqrt(n));
-          while(n%(Math.pow(a,2))!=0){
-              a=a-1;
-          }
-          b = n/(a*a);
-          if(a==1){a=""};
-          c=String.raw`\sqrt{`;
-          d="}";
-      }
-      return [a,b,c,d]
-  }
-  function teksSederhanakanAkar(n){
-      let m = sederhanakanAkar(n);
-      return String.raw`${m[0]}${m[2]}${m[1]}${m[3]}`;
-  }
-
-  function ac(angka){
-    return Math.floor(Math.random()*angka)
-}
-
-function acan(angkapertama=0,angkakedua=1){
-    angkakedua = angkakedua ?? angkapertama+1
-    return angkapertama+ac(angkakedua-angkapertama+1)
-}
-
-function plusminus(){
-    return Math.pow(-1,ac(2))
-}
-
-function plmi(n=0){
-    return plusminus()*n
-}
-
-function pecahan(pembilang,penyebut){
-    let faktor = fpb2(pembilang,penyebut)
-    if(faktor==penyebut){
-      return pembilang/penyebut
-    }else{return String.raw`\dfrac{${pembilang/faktor}}{${penyebut/faktor}}`}
-  }
-  function koef(n=0){
-      if(n==1){
-          return ""
-      }else if(n==-1){
-        return "-"
-      }else{return n}
-  }
-  function tanda1(n){
-    if(n<0){
-      return n
-    }else{return `+${n}`}
-  }
-  function tanda2(n){
-    if(n==-1){
-        return `&minus; `;
+    // 3. Validasi ketat untuk menghindari error komputasi
+    if (!deretAngka.every(n => typeof n === 'number' && Number.isFinite(n))) {
+        throw new Error("MATEMATIKIN: Semua elemen harus berupa angka yang valid.");
     }
-    else if(n==1){
-        return "+ ";
-    }
-    else if(n<0){
-      return `&minus; ${Math.abs(n)}`
-    }else{return `+ ${n}`}
-  }
 
-  function tanda3(n=0){
-      if(n==-1){
-          return `&minus;`;
-      }
-      else if(n==1){
-          return "";
-      }
-    else if(n<0){
-        return `&minus;${Math.abs(n)}`
-      }else{return `${n}`}
-  }
-  function tanda4(n=0){
-    if(n==0){
-        return ""
-    }else{
-        return tanda1(n)
-    }
-  }
+    // 4. Eksekusi reduce yang benar: akumulator HANYA ditambah, nilaiSaatIni yang dikuadratkan
+    return deretAngka.reduce((akumulator, nilaiSaatIni) => {
+        return akumulator + (nilaiSaatIni * nilaiSaatIni);
+    }, 0); // Nilai awal akumulator wajib 0
+};
 
-  var min9sampai9tanpa0 = [];
-for(let i=-9;i<10;i++){
-    if(i!==0){
-        min9sampai9tanpa0.push(i)
+/**
+ * Menghitung panjang (magnitudo) dari sebuah vektor n-dimensi.
+ * Mendukung input array [x, y, z] maupun angka berjejer (x, y, z).
+ */
+const panjangVektor = (...vektor) => {
+    // 1. Deteksi format input
+    const elemenVektor = Array.isArray(vektor[0]) ? vektor[0] : vektor;
+
+    // 2. Kembalikan 0 jika vektor kosong
+    if (elemenVektor.length === 0) return 0;
+
+    // 3. Eksekusi perhitungan menggunakan fungsi bawaan MATEMATIKIN
+    return Math.sqrt(jumlahKuadrat(elemenVektor));
+};
+
+/**
+ * Menghitung Perkalian Titik (Dot Product) dari dua vektor.
+ * Mengembalikan sebuah nilai skalar (angka tunggal).
+ */
+const dotVektor = (vektor1, vektor2) => {
+    // 1. Validasi Input: Pastikan keduanya adalah Array
+    if (!Array.isArray(vektor1) || !Array.isArray(vektor2)) {
+        throw new Error("MATEMATIKIN: Kedua input harus berupa array vektor.");
     }
-}
-function konst(n){
-    if(n==0){
+
+    // 2. Validasi Syarat Mutlak: Dimensi (panjang) harus sama
+    if (vektor1.length !== vektor2.length) {
+        throw new Error("MATEMATIKIN: Operasi Dot Product gagal. Kedua vektor harus memiliki dimensi yang sama.");
+    }
+
+    // 3. Kembalikan 0 jika vektor kosong
+    if (vektor1.length === 0) return 0;
+
+    // 4. Eksekusi menggunakan reduce untuk gaya fungsional yang elegan
+    return vektor1.reduce((total, nilaiSaatIni, indeks) => {
+        // Kalikan elemen vektor1 dengan elemen vektor2 pada indeks yang sama
+        return total + (nilaiSaatIni * vektor2[indeks]);
+    }, 0);
+};
+
+/**
+ * Menghitung Perkalian Silang (Cross Product) dari dua buah vektor 3D.
+ * Mengembalikan array vektor baru yang tegak lurus terhadap kedua vektor input.
+ */
+const crossVektor = (vektor1, vektor2) => {
+    // 1. Validasi Input: Pastikan keduanya adalah Array
+    if (!Array.isArray(vektor1) || !Array.isArray(vektor2)) {
+        throw new Error("MATEMATIKIN: Kedua input harus berupa array vektor.");
+    }
+
+    // 2. Validasi Syarat Mutlak: Harus Vektor 3D
+    if (vektor1.length !== 3 || vektor2.length !== 3) {
+        throw new Error("MATEMATIKIN: Operasi Cross Product hanya berlaku untuk vektor 3 dimensi (terdiri dari komponen x, y, z).");
+    }
+
+    // 3. Eksekusi Rumus Eksplisit (Sangat Cepat & Tanpa Looping)
+    return [
+        (vektor1[1] * vektor2[2]) - (vektor1[2] * vektor2[1]), // Komponen i (Sumbu X)
+        (vektor1[2] * vektor2[0]) - (vektor1[0] * vektor2[2]), // Komponen j (Sumbu Y)
+        (vektor1[0] * vektor2[1]) - (vektor1[1] * vektor2[0])  // Komponen k (Sumbu Z)
+    ];
+};
+
+/**
+ * Menghitung Proyeksi Vektor Ortogonal dari vektor asal ke vektor tujuan.
+ * Mengembalikan array vektor baru.
+ */
+const proyeksiVektor = (vektorAsal, vektorTujuan) => {
+    // 1. Validasi Input
+    if (!Array.isArray(vektorAsal) || !Array.isArray(vektorTujuan)) {
+        throw new Error("MATEMATIKIN: Input harus berupa array vektor.");
+    }
+    if (vektorAsal.length !== vektorTujuan.length) {
+        throw new Error("MATEMATIKIN: Dimensi kedua vektor harus sama.");
+    }
+
+    // 2. Hitung kuadrat dari panjang vektor tujuan (Penyebut)
+    // Menggunakan dotVektor(B, B) jauh lebih cepat dan presisi daripada Math.pow(panjang, 2)
+    const penyebut = dotVektor(vektorTujuan, vektorTujuan);
+
+    // 3. Validasi pembagian dengan nol
+    // Jika vektor tujuan adalah vektor nol (0, 0, 0), proyeksi tidak terdefinisi
+    if (penyebut === 0) {
+        throw new Error("MATEMATIKIN: Vektor tujuan tidak boleh berupa vektor nol.");
+    }
+
+    // 4. Hitung konstanta skalar (Pembilang / Penyebut)
+    const skalar = dotVektor(vektorAsal, vektorTujuan) / penyebut;
+
+    // 5. Kalikan vektor tujuan dengan konstanta skalar menggunakan .map()
+    return vektorTujuan.map(elemen => skalar * elemen);
+};
+
+/**
+ * Menghitung Proyeksi Skalar Ortogonal (panjang proyeksi) dari vektor asal ke vektor tujuan.
+ * Mengembalikan sebuah angka (skalar).
+ */
+const proyeksiSkalar = (vektorAsal, vektorTujuan) => {
+    const panjangTujuan = panjangVektor(vektorTujuan);
+
+    // Cegah pembagian dengan nol
+    if (panjangTujuan === 0) {
+        throw new Error("MATEMATIKIN: Vektor tujuan tidak boleh berupa vektor nol.");
+    }
+
+    // Langsung manfaatkan fungsi dotVektor yang sudah ada
+    return dotVektor(vektorAsal, vektorTujuan) / panjangTujuan;
+};
+
+/**
+ * Menghitung besar sudut yang dibentuk oleh dua vektor.
+ * Mengembalikan hasil dalam satuan derajat (0 hingga 180).
+ */
+const sudutVektor = (vektor1, vektor2) => {
+    const mag1 = panjangVektor(vektor1);
+    const mag2 = panjangVektor(vektor2);
+
+    if (mag1 === 0 || mag2 === 0) {
+        throw new Error("MATEMATIKIN: Sudut tidak dapat dihitung jika ada vektor nol.");
+    }
+
+    // Hitung nilai cosinus
+    const cosTheta = dotVektor(vektor1, vektor2) / (mag1 * mag2);
+
+    // Keamanan ekstra: JavaScript terkadang menghasilkan angka seperti 1.0000000002 
+    // akibat inakurasi floating-point, yang membuat Math.acos() menjadi NaN.
+    // Kita batasi rentangnya murni dari -1 hingga 1.
+    const cosAman = Math.max(-1, Math.min(1, cosTheta));
+
+    // Cari sudut dalam radian, lalu konversi ke derajat
+    const sudutRadian = Math.acos(cosAman);
+    return (sudutRadian * 180) / Math.PI;
+};
+
+/**
+ * Mencari Vektor Satuan dari sebuah vektor.
+ * Mengembalikan array vektor baru dengan panjang 1.
+ */
+const vektorSatuan = (vektor) => {
+    const elemenVektor = Array.isArray(vektor[0]) ? vektor[0] : vektor;
+    const panjang = panjangVektor(elemenVektor);
+
+    if (panjang === 0) {
+        throw new Error("MATEMATIKIN: Vektor nol tidak memiliki vektor satuan.");
+    }
+
+    // Bagi setiap komponen vektor dengan panjang totalnya
+    return elemenVektor.map(komponen => komponen / panjang);
+};
+
+/**
+ * Menjumlahkan atau mengurangkan komponen dari dua vektor.
+ * Parameter operasi menerima string: 'tambah' (default) atau 'kurang'.
+ */
+const aritmetikaVektor = (vektor1, vektor2, operasi = 'tambah') => {
+    if (!Array.isArray(vektor1) || !Array.isArray(vektor2) || vektor1.length !== vektor2.length) {
+        throw new Error("MATEMATIKIN: Input harus berupa array vektor dengan dimensi yang sama.");
+    }
+
+    return vektor1.map((komponen, indeks) => {
+        return operasi === 'kurang'
+            ? komponen - vektor2[indeks]
+            : komponen + vektor2[indeks];
+    });
+};
+
+/**
+ * Menyederhanakan bentuk akar (sqrt(n)) menjadi bentuk a\sqrt{b}.
+ * Mengembalikan string dalam format LaTeX.
+ */
+const sederhanakanAkar = (n) => {
+    // 1. Validasi Input: Pastikan angka adalah bilangan bulat positif atau nol
+    if (typeof n !== 'number' || !Number.isInteger(n) || n < 0) {
+        throw new Error("MATEMATIKIN: Input harus berupa bilangan bulat positif atau nol.");
+    }
+
+    // Kasus khusus untuk angka 0
+    if (n === 0) return "0";
+
+    // 2. Panggil fungsi yang sudah kita buat sebelumnya!
+    const a = faktorKuadratTerbesar(n);
+    const b = n / (a * a);
+
+    // 3. Format output LaTeX secara langsung
+
+    // Basis Kasus 1: Kuadrat Sempurna (contoh: akar 36 -> "6")
+    if (b === 1) {
+        return `${a}`;
+    }
+
+    // Basis Kasus 2: Tidak bisa disederhanakan (contoh: akar 7 -> "\sqrt{7}")
+    if (a === 1) {
+        return `\\sqrt{${n}}`;
+    }
+
+    // Basis Kasus 3: Bisa disederhanakan (contoh: akar 12 -> "2\sqrt{3}")
+    return `${a}\\sqrt{${b}}`;
+};
+
+/**
+ * Menghasilkan bilangan bulat acak di antara dua nilai (inklusif).
+ * Sangat berguna untuk menghasilkan angka soal yang bervariasi.
+ */
+const acakAntara = (min = 0, max = 1) => {
+    // 1. Validasi: Pastikan kedua input adalah angka
+    if (typeof min !== 'number' || typeof max !== 'number') {
+        throw new Error("MATEMATIKIN: Batas minimum dan maksimum harus berupa angka.");
+    }
+
+    // 2. Bulatkan ke bawah untuk berjaga-jaga jika ada input desimal
+    min = Math.floor(min);
+    max = Math.floor(max);
+
+    // 3. Keamanan Ekstra (Auto-Swap): 
+    // Jika pengguna memasukkan posisi terbalik (misal max, min), 
+    // fungsi Math.min dan Math.max akan otomatis mengaturnya ke posisi yang benar.
+    const batasBawah = Math.min(min, max);
+    const batasAtas = Math.max(min, max);
+
+    // 4. Eksekusi pengacakan (inklusif: menyertakan batas bawah dan batas atas)
+    return Math.floor(Math.random() * (batasAtas - batasBawah + 1)) + batasBawah;
+};
+
+/**
+ * Memberikan tanda positif atau negatif secara acak pada sebuah angka.
+ * Jika tidak ada angka yang dimasukkan, secara default akan mengembalikan 1 atau -1.
+ * Sangat berguna untuk generator soal variabel/aljabar acak.
+ */
+const acakTanda = (n = 1) => {
+    // 1. Validasi Input: Pastikan n adalah angka
+    if (typeof n !== 'number' || !Number.isFinite(n)) {
+        throw new Error("MATEMATIKIN: Input harus berupa angka.");
+    }
+
+    // 2. Logika Probabilitas 50/50 (Sangat Cepat!)
+    // Math.random() menghasilkan desimal antara 0 hingga 0.99...
+    // Peluang angkanya di bawah 0.5 adalah persis 50%.
+    return Math.random() < 0.5 ? n : -n;
+};
+
+/**
+ * Menyederhanakan pecahan dan mengonversinya menjadi format LaTeX \dfrac.
+ * Otomatis menangani penempatan tanda negatif yang proporsional.
+ */
+const pecahan = (pembilang, penyebut) => {
+    // 1. Validasi Input: Pastikan keduanya adalah bilangan bulat
+    if (!Number.isInteger(pembilang) || !Number.isInteger(penyebut)) {
+        throw new Error("MATEMATIKIN: Pembilang dan penyebut harus berupa bilangan bulat.");
+    }
+
+    // 2. Cegah Pembagian dengan Nol
+    if (penyebut === 0) {
+        throw new Error("MATEMATIKIN: Penyebut pecahan tidak boleh bernilai nol.");
+    }
+
+    // 3. Kasus Khusus: Jika pembilang 0, langsung kembalikan string "0"
+    if (pembilang === 0) return "0";
+
+    // 4. Deteksi Tanda Negatif 
+    // Jika hanya salah satu yang negatif, maka pecahan tersebut bernilai negatif
+    const apakahNegatif = (pembilang < 0) !== (penyebut < 0);
+
+    // 5. Gunakan nilai absolut murni untuk proses penyederhanaan
+    const absPem = Math.abs(pembilang);
+    const absPen = Math.abs(penyebut);
+
+    // Panggil fungsi FPB yang sudah kita asah kecepatannya sebelumnya
+    const faktor = fpb(absPem, absPen);
+
+    // 6. Sederhanakan angka
+    const pemSederhana = absPem / faktor;
+    const penSederhana = absPen / faktor;
+
+    // 7. Siapkan tanda minus untuk ditempelkan di depan pecahan (bukan di dalam)
+    const tanda = apakahNegatif ? "-" : "";
+
+    // 8. Output Final
+    // Jika penyebutnya 1 (berarti bilangan bulat utuh), tidak perlu format dfrac
+    if (penSederhana === 1) {
+        return `${tanda}${pemSederhana}`;
+    }
+
+    // Kembalikan format LaTeX yang sudah bersih dan terstandarisasi
+    return `${tanda}\\dfrac{${pemSederhana}}{${penSederhana}}`;
+};
+
+/**
+ * Memformat angka koefisien aljabar agar sesuai standar penulisan matematika.
+ * Mengubah 1 menjadi kosong (""), dan -1 menjadi tanda minus murni ("-").
+ * Selalu mengembalikan tipe data String.
+ */
+const koefisien = (n = 0) => {
+    // 1. Validasi: Pastikan input adalah angka
+    if (typeof n !== 'number' || !Number.isFinite(n)) {
+        throw new Error("MATEMATIKIN: Input koefisien harus berupa angka.");
+    }
+
+    // 2. Format standar aljabar
+    if (n === 1) {
         return "";
     }
-    else{
-        return tanda1(n)
+
+    if (n === -1) {
+        // Menggunakan tanda strip standar untuk kompatibilitas LaTeX/MathJax
+        return "-";
     }
-}
-function kurmin(angka=0){
-  if(angka>=0){
-    return angka
-  }else{return `(${angka})`}
-}
 
-//membuat array berisi bilangan bulat dari batasbawah hingga batasatas
-const arraybilbul = (batasbawah=0,batasatas=batasbawah+1) => {
-    let hasil = [];
-    for (let i = batasbawah; i < batasatas+1; i++) {
-        hasil.push(i)
+    // 3. Pastikan angka selain 1 dan -1 dikembalikan sebagai String
+    return String(n);
+};
+
+/**
+ * Memformat suku konstanta (angka tanpa variabel) di ujung persamaan.
+ * Pengganti dari fungsi tanda1() dan tanda4().
+ */
+const formatKonstanta = (n = 0) => {
+    // Validasi dan hilangkan jika n adalah 0
+    if (typeof n !== 'number' || !Number.isFinite(n) || n === 0) return "";
+
+    // Jika negatif, otomatis membawa tanda '-'. Jika positif, tambahkan '+'
+    return n < 0 ? `${n}` : `+${n}`;
+};
+
+/**
+ * Memformat koefisien untuk suku lanjutan (yang menempel pada variabel).
+ * Pengganti dari fungsi tanda2().
+ */
+const formatSuku = (n = 0) => {
+    // Validasi dan hilangkan seluruh suku jika n adalah 0
+    if (typeof n !== 'number' || !Number.isFinite(n) || n === 0) return "";
+
+    // Kasus khusus koefisien 1 dan -1 (angka 1 disembunyikan)
+    if (n === 1) return "+ ";
+    if (n === -1) return "- ";
+
+    // Selain itu, cetak tanda dan angkanya secara proporsional
+    return n < 0 ? `- ${Math.abs(n)}` : `+ ${n}`;
+};
+
+/**
+ * Menghasilkan deret angka (array) dari batas minimum hingga maksimum.
+ * Secara otomatis membuang angka 0 dari dalam deret.
+ * Sangat cocok sebagai bank angka koefisien variabel.
+ */
+const deretTanpaNol = (min = -9, max = 9) => {
+    // 1. Validasi Input
+    if (typeof min !== 'number' || typeof max !== 'number') {
+        throw new Error("MATEMATIKIN: Batas minimum dan maksimum harus berupa angka.");
     }
-    return hasil
-}
 
-//memilih sebagian elemen dari array arr dan tetap terurut
-function pilihSebagian(arr=[],num=1){
-    const res = [];
-    let indeks = [];
-    let arr2 = arraybilbul(0,arr.length-1);
-    for(let i = 0; i < num; ){
-       const random = Math.floor(Math.random() * arr2.length);
-       indeks.push(arr2[random]);
-       arr2.splice(random,1);
-       i++;
-    };
-    indeks.sort(function(a,b){return a-b});
-    for (let i = 0; i < indeks.length; i++) {
-        res[i] = arr[indeks[i]];
+    // 2. Pastikan batas bawah dan atas tidak terbalik
+    const batasBawah = Math.min(min, max);
+    const batasAtas = Math.max(min, max);
+
+    // 3. Generate deret angka menggunakan Array.from, lalu buang nilai 0 dengan filter
+    return Array.from(
+        { length: batasAtas - batasBawah + 1 },
+        (_, i) => batasBawah + i
+    ).filter(angka => angka !== 0);
+};
+
+/**
+ * Membungkus angka negatif dengan tanda kurung. Sangat penting untuk 
+ * menampilkan operasi substitusi aljabar agar tidak ambigu.
+ * Selalu mengembalikan tipe data String.
+ */
+const kurungNegatif = (angka = 0) => {
+    // Validasi input
+    if (typeof angka !== 'number' || !Number.isFinite(angka)) return "";
+
+    // Jika negatif, bungkus dengan kurung. Jika positif/nol, ubah ke teks biasa.
+    return angka < 0 ? `(${angka})` : String(angka);
+};
+
+/**
+ * Menghasilkan tanda minus "-" atau kosong "" dengan probabilitas 50:50.
+ * Sangat ideal untuk mengacak tanda pada suku paling depan dari sebuah polinomial.
+ */
+const acakMinus = () => {
+    // Manfaatkan fungsi acakTanda() yang sudah kita buat sebelumnya
+    // Jika acakTanda() menghasilkan -1, kembalikan "-", jika tidak kosong ""
+    return acakTanda() === -1 ? "-" : "";
+};
+
+/**
+ * Menghasilkan array berisi deret bilangan bulat berurutan.
+ * Otomatis menangani posisi batas bawah dan atas yang terbalik.
+ */
+const deretBilBul = (batasBawah = 0, batasAtas = 1) => {
+    // 1. Validasi Input: Pastikan keduanya adalah bilangan bulat
+    if (!Number.isInteger(batasBawah) || !Number.isInteger(batasAtas)) {
+        throw new Error("MATEMATIKIN: Batas bawah dan atas harus berupa bilangan bulat.");
     }
-    return res;
-}
 
-//memilih sebagian elemen dari array arr kemudian posisinya diacak
-const pilihacak = (arr, num = 1) => {
-    const res = [];
-    for(let i = 0; i < num; ){
-       const random = Math.floor(Math.random() * arr.length);
-       if(res.indexOf(arr[random]) !== -1){
-          continue;
-       };
-       res.push(arr[random]);
-       i++;
-    };
-    return res;
- };
+    // 2. Keamanan Ekstra (Auto-Swap)
+    // Jika input terbalik (misal batasBawah 10, batasAtas 5), fungsi ini 
+    // otomatis mengurutkannya menjadi rentang 5 hingga 10.
+    const min = Math.min(batasBawah, batasAtas);
+    const max = Math.max(batasBawah, batasAtas);
 
- //mengacak urutan elemen pada array
- function acakarray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+    // 3. Eksekusi fungsional satu baris dengan Array.from
+    return Array.from({ length: max - min + 1 }, (_, i) => min + i);
+};
+
+/**
+ * 1. MESIN UTAMA: Mengacak urutan array dengan algoritma Fisher-Yates murni.
+ * Menggunakan pendekatan Imutabel (mengembalikan array baru tanpa merusak array asli).
+ */
+const acakArray = (arr) => {
+    if (!Array.isArray(arr)) throw new Error("MATEMATIKIN: Input harus berupa array.");
+
+    // Gandakan array agar array soal/data asli siswa tidak ikut rusak
+    const salinan = [...arr];
+
+    for (let i = salinan.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [salinan[i], salinan[j]] = [salinan[j], salinan[i]];
     }
-  }
+    return salinan;
+};
 
-  //shortcut untuk Math.sin
-  function sin(x=0){
-    return Math.sin(x*Math.PI/180);
-  }
+/**
+ * 2. Memilih sebagian elemen, lalu POSISINYA DIACAK.
+ * Sangat aman meskipun di dalam array ada nilai kembar/duplikat.
+ */
+const pilihAcak = (arr, num = 1) => {
+    if (!Array.isArray(arr) || num <= 0) return [];
 
-  //shortcut untuk Math.cos
-  function cos(x=0){
-    return Math.cos(x*Math.PI/180);
-  }
+    // Langsung acak seluruh elemen, lalu potong (slice) sebanyak yang diminta
+    return acakArray(arr).slice(0, num);
+};
 
-    //shortcut untuk Math.tan
-    function tan(x=0){
-        return Math.tan(x*Math.PI/180);
-      }
+/**
+ * 3. Memilih sebagian elemen, dengan urutan TETAP TERJAGA seperti aslinya.
+ */
+const pilihSebagian = (arr, num = 1) => {
+    if (!Array.isArray(arr) || num <= 0) return [];
+    if (num >= arr.length) return [...arr];
 
-  //membuat tabel dari array
-  function buattabelsoal(arr=[],tempattabel="",opsi={}){
+    // Buat deret indeks (0, 1, ..., n), acak indeksnya, potong sebanyak num
+    const semuaIndeks = Array.from({ length: arr.length }, (_, i) => i);
+    const indeksTerpilih = acakArray(semuaIndeks).slice(0, num);
+
+    // Urutkan kembali indeks yang terpilih dari kecil ke besar
+    indeksTerpilih.sort((a, b) => a - b);
+
+    // Tarik nilai asli berdasarkan indeks yang sudah berurutan
+    return indeksTerpilih.map(indeks => arr[indeks]);
+};
+
+/**
+ * 4. DERANGEMENT: Mengacak total sehingga TIDAK ADA elemen di posisi awalnya.
+ * Dilengkapi "Sabuk Pengaman" agar browser tidak crash jika kondisinya mustahil.
+ */
+const acakDerangement = (arr) => {
+    if (!Array.isArray(arr) || arr.length < 2) {
+        throw new Error("MATEMATIKIN: Derangement butuh minimal 2 elemen.");
+    }
+
+    // Cek kemustahilan: Jika semua elemen nilainya sama persis
+    if (arr.every(val => val === arr[0])) {
+        throw new Error("MATEMATIKIN: Derangement mustahil untuk elemen yang identik semua.");
+    }
+
+    let batasLooping = 0;
+    const batasMaksimal = 1000; // Mencegah Infinite Loop
+
+    while (batasLooping < batasMaksimal) {
+        let hasilAcak = acakArray(arr);
+
+        // Pengecekan sukses: pastikan tidak ada yang posisinya sama dengan array awal
+        if (hasilAcak.every((val, i) => val !== arr[i])) {
+            return hasilAcak;
+        }
+        batasLooping++;
+    }
+
+    throw new Error("MATEMATIKIN: Gagal menemukan kombinasi acak total. Formasi array mungkin tidak mendukung.");
+};
+
+
+
+/**
+ * Helper internal untuk menetralisir anomali floating-point JavaScript.
+ * Membulatkan angka ke 10 angka di belakang koma.
+ */
+const _presisiTrigo = (nilai) => {
+    return Math.round(nilai * 1e10) / 1e10;
+};
+
+/**
+ * Menghitung nilai Sinus dari sudut dalam satuan derajat.
+ */
+const sin = (derajat = 0) => {
+    if (typeof derajat !== 'number' || !Number.isFinite(derajat)) throw new Error("MATEMATIKIN: Sudut harus berupa angka.");
+    return _presisiTrigo(Math.sin(derajat * Math.PI / 180));
+};
+
+/**
+ * Menghitung nilai Cosinus dari sudut dalam satuan derajat.
+ */
+const cos = (derajat = 0) => {
+    if (typeof derajat !== 'number' || !Number.isFinite(derajat)) throw new Error("MATEMATIKIN: Sudut harus berupa angka.");
+    return _presisiTrigo(Math.cos(derajat * Math.PI / 180));
+};
+
+/**
+ * Menghitung nilai Tangen dari sudut dalam satuan derajat.
+ * Dilengkapi pengaman untuk sudut yang tidak terdefinisi (90, 270, dst).
+ */
+const tan = (derajat = 0) => {
+    if (typeof derajat !== 'number' || !Number.isFinite(derajat)) throw new Error("MATEMATIKIN: Sudut harus berupa angka.");
+
+    // Syarat mutlak Tangen: sudut tidak boleh kelipatan ganjil dari 90 derajat
+    // (misal 90, 270, -90, 450)
+    if (Math.abs(derajat % 180) === 90) {
+        throw new Error(`MATEMATIKIN: Nilai Tangen untuk sudut ${derajat} derajat tidak terdefinisi (Infinity).`);
+    }
+
+    return _presisiTrigo(Math.tan(derajat * Math.PI / 180));
+};
+/**
+ * Menghitung Cosecan (1 / sin).
+ * Tidak terdefinisi pada kelipatan 180 derajat (0, 180, 360, dst).
+ */
+const csc = (derajat = 0) => {
+    if (typeof derajat !== 'number') throw new Error("MATEMATIKIN: Sudut harus berupa angka.");
+    if (derajat % 180 === 0) {
+        throw new Error(`MATEMATIKIN: Cosecan untuk sudut ${derajat} derajat tidak terdefinisi (Infinity).`);
+    }
+    return _presisiTrigo(1 / Math.sin(derajat * Math.PI / 180));
+};
+
+/**
+ * Menghitung Secan (1 / cos).
+ * Tidak terdefinisi pada sudut ganjil kelipatan 90 derajat (90, 270, dst).
+ */
+const sec = (derajat = 0) => {
+    if (typeof derajat !== 'number') throw new Error("MATEMATIKIN: Sudut harus berupa angka.");
+    if (Math.abs(derajat % 180) === 90) {
+        throw new Error(`MATEMATIKIN: Secan untuk sudut ${derajat} derajat tidak terdefinisi (Infinity).`);
+    }
+    return _presisiTrigo(1 / Math.cos(derajat * Math.PI / 180));
+};
+
+/**
+ * Menghitung Cotangen (cos / sin).
+ * Tidak terdefinisi pada kelipatan 180 derajat (0, 180, 360, dst).
+ */
+const ctg = (derajat = 0) => {
+    if (typeof derajat !== 'number') throw new Error("MATEMATIKIN: Sudut harus berupa angka.");
+    if (derajat % 180 === 0) {
+        throw new Error(`MATEMATIKIN: Cotangen untuk sudut ${derajat} derajat tidak terdefinisi (Infinity).`);
+    }
+    // Rasio cos/sin lebih kebal error dibandingkan 1/tan
+    const rad = derajat * Math.PI / 180;
+    return _presisiTrigo(Math.cos(rad) / Math.sin(rad));
+};
+/**
+ * Menghitung Arcsinus (mencari sudut dari nilai Sinus).
+ * Input wajib berada di antara -1 hingga 1.
+ */
+const arcsin = (nilai) => {
+    if (typeof nilai !== 'number') throw new Error("MATEMATIKIN: Input harus berupa angka.");
+    if (nilai < -1 || nilai > 1) {
+        throw new Error("MATEMATIKIN: Domain Arcsin (nilai sinus) harus berada di rentang -1 hingga 1.");
+    }
+    // Math.asin menghasilkan radian, kita kalikan (180 / PI) untuk menjadi derajat
+    return _presisiTrigo(Math.asin(nilai) * 180 / Math.PI);
+};
+
+/**
+ * Menghitung Arccosinus (mencari sudut dari nilai Cosinus).
+ * Input wajib berada di antara -1 hingga 1.
+ */
+const arccos = (nilai) => {
+    if (typeof nilai !== 'number') throw new Error("MATEMATIKIN: Input harus berupa angka.");
+    if (nilai < -1 || nilai > 1) {
+        throw new Error("MATEMATIKIN: Domain Arccos (nilai cosinus) harus berada di rentang -1 hingga 1.");
+    }
+    return _presisiTrigo(Math.acos(nilai) * 180 / Math.PI);
+};
+
+/**
+ * Menghitung Arctangen (mencari sudut dari nilai Tangen).
+ * Bisa menerima angka berapapun (dari negatif tak hingga sampai tak hingga).
+ */
+const arctan = (nilai) => {
+    if (typeof nilai !== 'number') throw new Error("MATEMATIKIN: Input harus berupa angka.");
+    return _presisiTrigo(Math.atan(nilai) * 180 / Math.PI);
+};
+
+//membuat tabel dari array
+const buattabelsoal = (arr = [], tempattabel = "", opsi = {}) => {
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+        throw new Error("MATEMATIKIN: buattabelsoal hanya dapat berjalan di lingkungan Browser.");
+    }
+    if (typeof QRCode === 'undefined') {
+         throw new Error("MATEMATIKIN: Library QRCode.js tidak ditemukan.");
+    }
     let bykbaris = arr.length;
     let bykkolom = arr[0].length;
     let teks = String.raw`<table class='w3-table-all tengah'>
@@ -611,7 +1248,7 @@ const pilihacak = (arr, num = 1) => {
         </thead>
         <tbody>`;
     for (let i = 0; i < arr.length; i++) {
-        teks += String.raw`<tr><td class="w3-deep-orange" style="font-size: 40px; text-align: left">${i+1}</td><td style="text-align: justify">${arr[i][0]}</td><td><div id="qrc${i}"></div><div style="text-align: center">${arr[i][1]}</div></td></tr>`;
+        teks += String.raw`<tr><td class="w3-deep-orange" style="font-size: 40px; text-align: left">${i + 1}</td><td style="text-align: justify">${arr[i][0]}</td><td><div id="qrc${i}"></div><div style="text-align: center">${arr[i][1]}</div></td></tr>`;
     };
     teks += String.raw`</tbody></table>`;
     document.getElementById(tempattabel).innerHTML = teks;
@@ -620,1042 +1257,716 @@ const pilihacak = (arr, num = 1) => {
     let warnaqr = opsi.warnaqr || "#000000";
     let qrkode = [];
     for (let i = 0; i < arr.length; i++) {
-        qrkode[i]=new QRCode("qrc"+i, {
-        text: String.raw`https://n9.cl/${arr[i][1]}`,
-        width: lebarqr,
-        height: tinggiqr,
-        colorDark : warnaqr,
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H
-    });
-      }
-  }
+        qrkode[i] = new QRCode("qrc" + i, {
+            text: String.raw`https://n9.cl/${arr[i][1]}`,
+            width: lebarqr,
+            height: tinggiqr,
+            colorDark: warnaqr,
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    }
+}
 
-  //Membuat Array bilangan menaik sampai tengah kemudian menurun sampai akhir
-  function buatArr(banyakBilangan, jumlah) {
+/**
+ * Membuat array dengan formasi "Bukit" (Menaik sampai tengah, lalu menurun).
+ * Total dari seluruh elemen dijamin sama persis dengan parameter 'jumlah'.
+ */
+const arrayBukit = (banyakBilangan, jumlah) => {
+    // 1. Validasi Input Mutlak
     if (banyakBilangan <= 0 || jumlah <= 0) {
-        throw new Error("banyakBilangan dan jumlah harus lebih besar dari 0");
+        throw new Error("MATEMATIKIN: banyakBilangan dan jumlah harus lebih dari 0.");
+    }
+    if (jumlah < banyakBilangan) {
+        throw new Error("MATEMATIKIN: 'jumlah' minimal harus sama dengan 'banyakBilangan' agar tidak ada angka 0/negatif.");
     }
 
-    let arr = [];
-    let rataRata = Math.floor(jumlah / banyakBilangan);
+    // 2. Distribusi dasar yang aman (menjaga total tetap akurat)
+    let arr = Array(banyakBilangan).fill(Math.floor(jumlah / banyakBilangan));
     let sisa = jumlah % banyakBilangan;
 
-    // Mengisi array dengan nilai rata-rata
-    for (let i = 0; i < banyakBilangan; i++) {
-        arr.push(rataRata);
-    }
-
-    // Menambahkan sisa secara acak ke elemen-elemen dalam array
+    // 3. Sebarkan sisa pembagian secara acak
     while (sisa > 0) {
-        let index = Math.floor(Math.random() * banyakBilangan);
-        arr[index]++;
+        arr[Math.floor(Math.random() * banyakBilangan)]++;
         sisa--;
     }
 
-    // Memastikan hanya ada maksimal dua bilangan yang sama
-    let countMap = {};
+    // 4. Berikan sedikit variasi acak agar angkanya tidak monoton 
+    // (Bongkar-pasang nilai antar elemen agar totalnya TETAP SAMA)
     for (let i = 0; i < banyakBilangan; i++) {
-        countMap[arr[i]] = (countMap[arr[i]] || 0) + 1;
-    }
-
-    for (let key in countMap) {
-        while (countMap[key] > 2) {
-            for (let i = 0; i < banyakBilangan; i++) {
-                if (arr[i] == key && countMap[key] > 2) {
-                    arr[i]++;
-                    countMap[key]--;
-                    countMap[arr[i]] = (countMap[arr[i]] || 0) + 1;
-                }
-            }
+        let idx1 = Math.floor(Math.random() * banyakBilangan);
+        let idx2 = Math.floor(Math.random() * banyakBilangan);
+        // Pindahkan nilai 1 poin dari idx1 ke idx2 (syarat idx1 > 1 agar tidak jadi 0)
+        if (arr[idx1] > 1 && idx1 !== idx2) {
+            arr[idx1]--;
+            arr[idx2]++;
         }
     }
 
-    // Mengurutkan array dan memastikan selisih tidak terlalu jauh
+    // 5. Tahap Formasi Bukit: Urutkan array dari yang terkecil ke terbesar
     arr.sort((a, b) => a - b);
-    for (let i = 1; i < arr.length; i++) {
-        if (arr[i] - arr[i - 1] > 1) {
-            let diff = arr[i] - arr[i - 1] - 1;
-            arr[i] -= diff;
-            arr[i - 1] += diff;
+
+    // 6. Gunakan teknik Two Pointers untuk menyusun formasi Naik-Turun
+    let hasil = new Array(banyakBilangan);
+    let kiri = 0;                     // Penunjuk indeks dari kiri
+    let kanan = banyakBilangan - 1;   // Penunjuk indeks dari kanan
+
+    for (let i = 0; i < banyakBilangan; i++) {
+        // Angka secara bergiliran diletakkan di sisi kiri, lalu di sisi kanan
+        if (i % 2 === 0) {
+            hasil[kiri] = arr[i];
+            kiri++;
+        } else {
+            hasil[kanan] = arr[i];
+            kanan--;
         }
     }
 
-    // Mengacak urutan elemen dalam array
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-
-    return arr;
-}
-  
-  function svgawal(lebar=0,tinggi=0,rasio=1,margin=0){
-    return String.raw`<svg xmlns='http://www.w3.org/2000/svg' style='max-width: ${rasio*(lebar+2*margin)}px; max-height: ${rasio*(tinggi+2*margin)}px;' viewbox='${-margin} ${-margin} ${lebar+2*margin} ${tinggi+2*margin}'>`;
-  }
-  function svgkoord(intervalx=[0,0],intervaly=[0,0],opsi={}){
-    var lebar = Math.abs(intervalx[1]-intervalx[0]);
-    var tinggi = Math.abs(intervaly[1]-intervaly[0]);
-    var rasio = opsi.rasio || 1;
-    var ukuranhuruf = opsi.ukuranhuruf || 1;
-    var wm = opsi.wm || false;
-    var wmteks = opsi.wmteks || "matematikaidhamdaz.blogspot.com";
-    var wmsize = opsi.wmsize || 1;
-    var wmtampak = opsi.wmtampak || 1;
-    var teks = "";
-    var tick = "";
-    for (let i = intervalx[0]+1; i < intervalx[1]; i++) {
-        if(i!=0){
-            tick+=String.raw`<line x1="${i}" y1="0"
-            x2="${i}" y2="${3/(rasio*16)}"
-            stroke="black"
-            stroke-width="${1/(rasio*16)}"/>
-            <text x="${i}"  y="${5/(rasio*16)}"  text-anchor="middle" dominant-baseline="hanging" style="font-family:'Times New Roman', Times, serif; font-size:${0.7*ukuranhuruf/(rasio*16)}em">${i}</text>`
-        }
-    }
-    for (let i = -intervaly[1]+1; i < -intervaly[0]; i++) {
-        if(i!=0){
-            tick+=String.raw`<line x1="0" y1="${i}"
-            x2="${-3/(rasio*16)}" y2="${i}"
-            stroke="black"
-            stroke-width="${1/(rasio*16)}"/>
-            <text x="${-5/(rasio*16)}"  y="${i}"  text-anchor="end" dominant-baseline="central" style="font-family:'Times New Roman', Times, serif; font-size:${0.7*ukuranhuruf/(rasio*16)}em">${-i}</text>`
-        }
-    }
-    if(wm==true){
-        teks = String.raw`<text x="${(intervalx[0]+intervalx[1])/2}"  y="${(intervaly[0]+intervaly[1])/2}"  text-anchor="middle" dominant-baseline="central" fill-opacity="${wmtampak}" transform="rotate(-45 ${(intervalx[0]+intervalx[1])/2} ${(intervaly[0]+intervaly[1])/2})" style="font-family:'Times New Roman', Times, serif; font-size:${0.8*wmsize/(rasio*16)}em">${wmteks}</text>`;
-    }
-    return String.raw`<svg xmlns='http://www.w3.org/2000/svg' style='max-width: ${(rasio*16)*(lebar)}px; max-height: ${(rasio*16)*(tinggi)}px;' viewbox='${intervalx[0]} ${-intervaly[1]} ${lebar} ${tinggi}'>
-    <defs>
-              <!-- arrowhead marker definition -->
-              <marker
-                id="arrow"
-                viewBox="0 0 10 10"
-                refX="9"
-                refY="5"
-                markerWidth="6"
-                markerHeight="6"
-                orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" />
-              </marker>
-          
-              <!-- simple dot marker definition -->
-              <marker
-                id="dot"
-                viewBox="0 0 10 10"
-                refX="5"
-                refY="5"
-                markerWidth="5"
-                markerHeight="5">
-                <circle cx="5" cy="5" r="5" fill="red" />
-              </marker>
-            </defs>
-          
-            <!-- Coordinate axes with an arrowhead in both directions -->
-            
-    <line x1="${intervalx[0]}" y1="0"
-    x2="${intervalx[1]}" y2="0"
-    stroke="black"
-    stroke-width="${1/(rasio*16)}" marker-end="url(#arrow)"/>
-    <line x1="0" y1="${-intervaly[0]}"
-    x2="0" y2="${-intervaly[1]}"
-    stroke="black"
-    stroke-width="${1/(rasio*16)}" marker-end="url(#arrow)"/>
-    <text x="${intervalx[1]}"  y="${4/(rasio*16)}"  text-anchor="end" dominant-baseline="hanging" style="font-family:'Times New Roman', Times, serif; font-size:${0.8*ukuranhuruf/(rasio*16)}em">&#119883;</text>
-    <text x="${-4/(rasio*16)}"  y="${-intervaly[1]}"  text-anchor="end" dominant-baseline="hanging" style="font-family:'Times New Roman', Times, serif; font-size:${0.8*ukuranhuruf/(rasio*16)}em">&#119884;</text>
-    ${teks}
-    ${tick}`;
-  }
-  function svggaris(garis=[],opsi={}){
-    let tbl = opsi.tebalgaris || 1;
-    let x1 = garis[0][0];
-    let y1 = garis[0][1];
-    let x2 = garis[1][0];
-    let y2 = garis[1][1];
-    let warna = opsi.warna || "black";
-    let dash = opsi.dash || "";
-    let tampakgaris = opsi.tampakgaris || 1;
-    let kepalapanah = opsi.kepalapanah || "";
-    let kodekepala = "";
-    if(kepalapanah!=""){
-        let tebalgariskepala = kepalapanah.tebal || 1;
-        let isi = kepalapanah.isi || warna;
-        let tampakisi = kepalapanah.tampakisi || 1;
-        let lebar = kepalapanah.lebar || 1;
-        let sudut = kepalapanah.sudut || 30;
-        let pjggrs = panjanggaris(garis);
-        let titc = [(lebar*(x1-x2))/pjggrs+x2,(lebar*(y1-y2))/pjggrs+y2];
-        let xc = titc[0];
-        let yc = titc[1];
-        let tinggi = lebar*tan(sudut);
-        let titd = [tinggi*(y1-y2)/pjggrs+xc,tinggi*(x2-x1)/pjggrs+yc]
-        let tite = [tinggi*(y2-y1)/pjggrs+xc,tinggi*(x1-x2)/pjggrs+yc]
-        kodekepala = svgsegi([garis[1],titd,tite],{warnagaris: warna, isi: isi, tampakisi: tampakisi, tebalgaris: tebalgariskepala})
-        //kepalapanah = `url(#${kepalapanah})`
-    }
-    return String.raw`<line x1="${garis[0][0]}" y1="${garis[0][1]}"
-    x2="${garis[1][0]}" y2="${garis[1][1]}"
-    stroke="${warna}"
-    stroke-width="${tbl}" stroke-dasharray="${dash}" stroke-opacity="${tampakgaris}"/> ${kodekepala}`
-  }
-  function svgsegi(kumpulantitik=[],opsi={}){
-    let listtitik = `${kumpulantitik[0][0]},${kumpulantitik[0][1]} `;
-    for (var i = 1; i < kumpulantitik.length; i++) {
-        listtitik += String.raw`${kumpulantitik[i][0]},${kumpulantitik[i][1]} `;
-      }
-      let warnagaris = opsi.warnagaris || "black";
-      let isi = opsi.isi || "none";
-      let transparanisi = opsi.tampakisi || 1;
-      let tampakgaris = opsi.tampakgaris || 1;
-      let tebalgaris = opsi.tebalgaris || 1;
-      let join = opsi.join || "miter";
-      return String.raw`<polygon points="${listtitik}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; fill:${isi}; opacity:${transparanisi}; stroke-opacity:${tampakgaris}; stroke-linejoin:${join}"/>`;
-  }
-  function panjanggaris(garis=[]){
-    return Math.sqrt((garis[1][0]-garis[0][0])*(garis[1][0]-garis[0][0])+(garis[1][1]-garis[0][1])*(garis[1][1]-garis[0][1]))
-  }
-  function svgsudut(arr=[],opsi={}){
-    let r = opsi.r || 1;
-    let tebalgaris = opsi.tebalgaris || 1;
-    let warnagaris = opsi.warnagaris || "black";
-    let isi = opsi.isi || "none";
-    let tampakisi = opsi.tampakisi || 1;
-    let tampakgaris = opsi.tampakgaris || 1;
-    let rotasi = opsi.rotasi || 0;
-    let busurbesar = opsi.busurbesar || 0;
-    let arah = opsi.arah || 1;
-    return String.raw`<path d="M ${arr[1][0]} ${arr[1][1]} L ${arr[1][0]+r*(arr[0][0]-arr[1][0])/panjanggaris([arr[0],arr[1]])} ${arr[1][1]+r*(arr[0][1]-arr[1][1])/panjanggaris([arr[0],arr[1]])} A ${r} ${r} ${rotasi} ${busurbesar} ${arah} ${arr[1][0]+r*(arr[2][0]-arr[1][0])/panjanggaris([arr[2],arr[1]])} ${arr[1][1]+r*(arr[2][1]-arr[1][1])/panjanggaris([arr[2],arr[1]])} z" stroke="${warnagaris}" fill="${isi}" fill-opacity="${tampakisi}" stroke-width="${tebalgaris}" stroke-opacity="${tampakgaris}"/>`;
-  }
-  function svgsiku(arr=[],opsi={}){
-    let r = opsi.r || 1;
-    let tebalgaris = opsi.tebalgaris || 1;
-    let warnagaris = opsi.warnagaris || "black";
-    let isi = opsi.isi || "none";
-    let tampakisi = opsi.tampakisi || 1;
-    let tampakgaris = opsi.tampakgaris || 1;
-    let ti1x = arr[0][0];
-    let ti1y = arr[0][1];
-    let ti2x = arr[1][0];
-    let ti2y = arr[1][1];
-    let ti3x = arr[2][0];
-    let ti3y = arr[2][1];
-    let pjg1 = panjanggaris([arr[0],arr[1]]);
-    let pjg2 = panjanggaris([arr[2],arr[1]]);
-    let tiawal = [ti2x+r*(ti1x-ti2x)/pjg1,ti2y+r*(ti1y-ti2y)/pjg1];
-    let tiakh = [ti2x+r*(ti3x-ti2x)/pjg2,ti2y+r*(ti3y-ti2y)/pjg2];
-    let titeng = [(tiawal[0]+tiakh[0])/2,(tiawal[1]+tiakh[1])/2];
-    let tilu = [2*titeng[0]-arr[1][0],2*titeng[1]-arr[1][1]]
-    return String.raw`<polygon points="${ti2x},${ti2y} ${tiawal[0]},${tiawal[1]} ${tilu[0]},${tilu[1]} ${arr[1][0]+r*(arr[2][0]-arr[1][0])/panjanggaris([arr[2],arr[1]])},${arr[1][1]+r*(arr[2][1]-arr[1][1])/panjanggaris([arr[2],arr[1]])}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; fill:${isi}; opacity:${tampakisi}; stroke-opacity:${tampakgaris}"/>`;
-  }
-  function svglabelgaris(garis=[],namalabel="A",opsi={}){
-    let ukuran = opsi.ukuran || 1;
-    let anchor = opsi.anchor || "start";
-    let baseline = opsi.baseline || "auto";
-    let xplus = opsi.xplus || 0;
-    let yplus = opsi.yplus || 0;
-    let warna = opsi.warna || "black";
-    return String.raw`<text x="${(garis[0][0]+garis[1][0])/2+xplus}"  y="${(garis[0][1]+garis[1][1])/2+yplus}" text-anchor="${anchor}" dominant-baseline="${baseline}" style="font-family:'Times New Roman', Times, serif; font-size:${ukuran}em; fill:${warna}">${namalabel}</text>`;
-  }
-
-  function svglabeltitik(titik=[0,0],namalabel="A",opsi={}){
-    let ukuran = opsi.ukuran || 1;
-    let anchor = opsi.anchor || "start";
-    let baseline = opsi.baseline || "auto";
-    let xplus = opsi.xplus || 0;
-    let yplus = opsi.yplus || 0;
-    return String.raw`<text x="${titik[0]+xplus}"  y="${titik[1]+yplus}" text-anchor="${anchor}" dominant-baseline="${baseline}" style="font-family:'Times New Roman', Times, serif; font-size:${ukuran}em">${namalabel}</text>`;
-  }
-
-  //titik potong 2 garis
-  function titikpotong(garis1=[],garis2=[]){
-    let x1 = garis1[0][0];
-    let y1 = garis1[0][1];
-    let x2 = garis1[1][0];
-    let y2 = garis1[1][1];
-    let x3 = garis2[0][0];
-    let y3 = garis2[0][1];
-    let x4 = garis2[1][0];
-    let y4 = garis2[1][1];
-    let m1 = (y2-y1)/(x2-x1);
-    let m2 = (y4-y3)/(x4-x3);
-    let xtipot = (-m1*x1+m2*x3+y1-y3)/(m2-m1);
-    let ytipot = (-m1*m2*x1+m1*m2*x3+m2*y1-m1*y3)/(m2-m1);
-    if(x1==x2){
-        xtipot = x1;
-        ytipot = y3+m2*(xtipot-x3);
-    }    
-    if(x3==x4){
-        xtipot = x3;
-        ytipot = y1+m1*(xtipot-x1);
-    }
-    return [xtipot,ytipot]
-  }
-  function titiktengah(garis=[]){
-    let xA = garis[0][0];
-    let yA = garis[0][1];
-    let xB = garis[1][0];
-    let yB = garis[1][1];
-    let x = (xA+xB)/2;
-    let y = (yA+yB)/2;
-    return [x,y]
-  }
-  function titikpadagaris(garis=[],perbandingan=1/1){
-    let xA = garis[0][0];
-    let xB = garis[1][0];
-    let yA = garis[0][1];
-    let yB = garis[1][1];
-    let x = (perbandingan*xB+xA)/(perbandingan+1);
-    let y = (perbandingan*yB+yA)/(perbandingan+1);
-    return [x,y]
-  }
-
-  function svglingkaran(titikpusat=[0,0],jarijari=1,options={}){
-    let isi = options.isi || "none";
-    let warnagaris = options.warnagaris || "black";
-    let dash = options.dash || "";
-    let tampakisi = options.tampakisi || 1;
-    let tampakgaris = options.tampakgaris || 1;
-    let tebalgaris = options.tebalgaris || 1;
-    return String.raw`<circle cx="${titikpusat[0]}" cy="${titikpusat[1]}" r="${jarijari}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; stroke-dasharray:${dash}; fill: ${isi}; fill-opacity:${tampakisi}; stroke-opacity:${tampakgaris}"/>`;
-  }
-  function svgkling(titikpusat=[0,0],jarijari=1,options={}){
-    let isi = options.isi || "none";
-    let warnagaris = options.warnagaris || "black";
-    let dash = options.dash || "";
-    let tampakisi = options.tampakisi || 1;
-    let tampakgaris = options.tampakgaris || 1;
-    let tebalgaris = options.tebalgaris || 1;
-    return String.raw`<circle cx="${titikpusat[0]}" cy="${-titikpusat[1]}" r="${jarijari}" style="stroke:${warnagaris}; stroke-width:${tebalgaris/16}; stroke-dasharray:${dash}; fill: ${isi}; fill-opacity:${tampakisi}; stroke-opacity:${tampakgaris}"/>`;
-  }
-  function svgksegi(kumpulantitik=[],opsi={}){
-    let listtitik = `${kumpulantitik[0][0]},${-kumpulantitik[0][1]} `;
-    for (var i = 1; i < kumpulantitik.length; i++) {
-        listtitik += String.raw`${kumpulantitik[i][0]},${-kumpulantitik[i][1]} `;
-      }
-      let warnagaris = opsi.warnagaris || "black";
-      let isi = opsi.isi || "none";
-      let transparanisi = opsi.tampakisi || 1;
-      let tampakgaris = opsi.tampakgaris || 1;
-      let tebalgaris = opsi.tebalgaris || 1;
-      let rasio = opsi.rasio || 1;
-      return String.raw`<polygon points="${listtitik}" style="stroke:${warnagaris}; stroke-width:${tebalgaris/(rasio*16)}; fill:${isi}; opacity:${transparanisi}; stroke-opacity:${tampakgaris}"/>`;
-  }
-  function svgkgaris(garis=[],opsi={}){
-    let tbl = opsi.tebalgaris || 1;
-    let warna = opsi.warna || "black";
-    let dash = opsi.dash || "";
-    let rasio = opsi.rasio || 1;
-    return String.raw`<line x1="${garis[0][0]}" y1="${-garis[0][1]}"
-    x2="${garis[1][0]}" y2="${-garis[1][1]}"
-    stroke="${warna}"
-    stroke-width="${tbl/(rasio*16)}" stroke-dasharray="${dash}"/>`
-  }
-  function svgklabeltitik(titik=[0,0],namalabel="A",opsi={}){
-    let ukuran = opsi.ukuran || 0.7;
-    let anchor = opsi.anchor || "start";
-    let baseline = opsi.baseline || "auto";
-    let xplus = opsi.xplus || 0;
-    let yplus = opsi.yplus || 0;
-    let rasio = opsi.rasio || 1;
-    return String.raw`<text x="${titik[0]+xplus/(rasio*16)}"  y="${-titik[1]-yplus/(rasio*16)}" text-anchor="${anchor}" dominant-baseline="${baseline}" style="font-family:'Times New Roman', Times, serif; font-size:${ukuran/(rasio*16)}em">${namalabel}</text>`;
-  }
-  function svgklabelgaris(garis=[],namalabel="A",opsi={}){
-    let ukuran = opsi.ukuran || 1;
-    let anchor = opsi.anchor || "start";
-    let baseline = opsi.baseline || "auto";
-    let xplus = opsi.xplus || 0;
-    let yplus = opsi.yplus || 0;
-    let warna = opsi.warna || "black";
-    let rasio = opsi.rasio || 1;
-    let rotasi = opsi.rotasi || 0;
-    return String.raw`<text x="${(garis[0][0]+garis[1][0])/2+xplus/(rasio*16)}"  y="${-(garis[0][1]+garis[1][1])/2-yplus/(rasio*16)}" text-anchor="${anchor}" dominant-baseline="${baseline}" transform="rotate(${rotasi} ${(garis[0][0]+garis[1][0])/2} ${-(garis[0][1]+garis[1][1])/2})" style="font-family:'Times New Roman', Times, serif; font-size:${ukuran/(rasio*16)}em; fill:${warna}">${namalabel}</text>`;
-  }
-function svgkfungkuad(koef=[],intervalx=[],opsi={}){
-    let a = -koef[0];
-    let b = -koef[1];
-    let c = -koef[2];
-    let x0 = intervalx[0];
-    let y0 = a*x0*x0+b*x0+c;
-    let x2 = intervalx[1];
-    let y2 = a*x2*x2+b*x2+c;
-    let m1 = 2*a*x0+b;
-    let m2 = 2*a*x2+b;
-    let x1 = (-m1*x0 + m2*x2 + y0 - y2)/(m2-m1);
-    let y1 = (-m1*m2*x0 + m1*m2*x2 + m2*y0 - m1*y2)/(m2-m1);
-    let warnagaris = opsi.warnagaris || "black";
-    let isi = opsi.isi || "none";
-    let tampakgaris = opsi.tampakgaris || 1;
-    let tampakisi = opsi.tampakisi || 1;
-    let tebal = opsi.tebalgaris || 1;
-    let rasio = opsi.rasio || 1;
-    return String.raw`<path d="M ${x0} ${y0} Q ${x1} ${y1} ${x2} ${y2}" stroke="${warnagaris}" fill="${isi}" stroke-width="${tebal/(rasio*16)}" stroke-opacity="${tampakgaris}" fill-opacity="${tampakisi}"/>`;
-}
-function svgkkurvaL(f,interval=[],iterasi=1,opsi={}){
-    let x0 = interval[0];
-    let y0 = -f(x0);
-    let xn = interval[1];
-    let xk = [];
-    let yk = [];
-    for (let i = 0; i < iterasi; i++) {
-        xk[i]=x0+(i+1)*(xn-x0)/iterasi;
-        yk[i] = -f(xk[i])
-    }
-    let teksQ = "";
-    for (let i = 0; i < xk.length; i++) {
-        teksQ += ` L ${xk[i]} ${yk[i]}`
-        
-    }
-    let warnagaris = opsi.warnagaris || "black";
-    let isi = opsi.isi || "none";
-    let tampakgaris = opsi.tampakgaris || 1;
-    let tampakisi = opsi.tampakisi || 1;
-    let tebal = opsi.tebalgaris || 1;
-    let rasio = opsi.rasio || 1;
-    return String.raw`<path d="M ${x0} ${y0}${teksQ}" stroke="${warnagaris}" fill="${isi}" stroke-width="${tebal/(rasio*16)}" stroke-opacity="${tampakgaris}" fill-opacity="${tampakisi}"/>`;
-}
-function svgkareakurvaL(f,interval=[],iterasi=1,opsi={}){
-    let x0 = interval[0];
-    let y0 = -f(x0);
-    let xn = interval[1];
-    let xk = [];
-    let yk = [];
-    for (let i = 0; i < iterasi; i++) {
-        xk[i]=x0+(i+1)*(xn-x0)/iterasi;
-        yk[i] = -f(xk[i])
-    }
-    let teksL = "";
-    for (let i = 0; i < xk.length; i++) {
-        teksL += ` L ${xk[i]} ${yk[i]}`
-        
-    }
-    let warnagaris = opsi.warnagaris || "black";
-    let isi = opsi.isi || "black";
-    let tampakgaris = opsi.tampakgaris || 1;
-    let tampakisi = opsi.tampakisi || 1;
-    let tebal = opsi.tebalgaris || 1;
-    let rasio = opsi.rasio || 1;
-    return String.raw`<path d="M ${x0} 0 L ${x0} ${y0}${teksL} L ${xn} 0 z" stroke="${warnagaris}" fill="${isi}" stroke-width="${tebal/(rasio*16)}" stroke-opacity="${tampakgaris}" fill-opacity="${tampakisi}"/>`;
-
-}
-function tipusling3titik(titik1=[],titik2=[],titik3=[]){
-    let x1 = titik1[0];
-    let y1 = titik1[1];
-    let x2 = titik2[0];
-    let y2 = titik2[1];
-    let x3 = titik3[0];
-    let y3 = titik3[1];
-    let a = x2 - x1;
-  let b = y2 - y1;
-  let c = x3 - x2;
-  let d = y3 - y2;
-
-  let e = (a * (x1 + x2)) + (b * (y1 + y2));
-  let f = (c * (x2 + x3)) + (d * (y2 + y3));
-
-  let g = 2 * ((a * (y3 - y2)) - (d * (x2 - x3)));
-
-  if (g === 0) {
-    return null;
-  }
-
-  let centerX = ((d * e) - (b * f)) / g;
-  let centerY = ((a * f) - (c * e)) / g;
-
-  return [centerX, centerY];
-}
-function jariling3titik(titik1=[],titik2=[],titik3=[]){
-    let x1 = titik1[0];
-    let y1 = titik1[1];
-    let x2 = titik2[0];
-    let y2 = titik2[1];
-    let x3 = titik3[0];
-    let y3 = titik3[1];
-    let a = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-    let b = Math.sqrt(Math.pow(x3 - x2, 2) + Math.pow(y3 - y2, 2));
-    let c = Math.sqrt(Math.pow(x3 - x1, 2) + Math.pow(y3 - y1, 2));
-    
-    let s = (a + b + c) / 2; // setengah dari keliling segitiga
-    let area = Math.sqrt(s * (s - a) * (s - b) * (s - c)); // luas segitiga menggunakan rumus Heron
-    
-    let radius = (a * b * c) / (4 * area); // rumus jari-jari lingkaran
-    
-    return radius;
-}
-function svgling3titik(kumpulantitik=[],options={}){
-    let titikpusat  = tipusling3titik(kumpulantitik[0],kumpulantitik[1],kumpulantitik[2]);
-    let jarijari = jariling3titik(kumpulantitik[0],kumpulantitik[1],kumpulantitik[2]);
-    let isi = options.isi || "none";
-    let warnagaris = options.warnagaris || "black";
-    let dash = options.dash || "";
-    let tampakisi = options.tampakisi || 1;
-    let tampakgaris = options.tampakgaris || 1;
-    let tebalgaris = options.tebalgaris || 1;
-    return String.raw`<circle cx="${titikpusat[0]}" cy="${titikpusat[1]}" r="${jarijari}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; stroke-dasharray:${dash}; fill: ${isi}; fill-opacity:${tampakisi}; stroke-opacity:${tampakgaris}"/>`;
-  }
-
-function svgpersegi(duatitik=[],opsi={}){
-    let tiA = duatitik[0];
-    let tiB = duatitik[1];
-    let tiC = [tiA[1]+tiB[0]-tiB[1],-tiA[0]+tiB[0]+tiB[1]];
-    let tiD = [-tiB[1]+tiA[0]+tiA[1],tiB[0]-tiA[0]+tiA[1]];
-    let listtitik = `${tiA[0]},${tiA[1]} ${tiB[0]},${tiB[1]} ${tiC[0]},${tiC[1]} ${tiD[0]},${tiD[1]}`
-    let warnagaris = opsi.warnagaris || "black";
-      let isi = opsi.isi || "none";
-      let transparanisi = opsi.tampakisi || 1;
-      let tampakgaris = opsi.tampakgaris || 1;
-      let tebalgaris = opsi.tebalgaris || 1;
-      let rasio = opsi.rasio || 1;
-      return String.raw`<polygon points="${listtitik}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; fill:${isi}; opacity:${transparanisi}; stroke-opacity:${tampakgaris}"/>`;
-}
-function svgpers1t(satutitik=[],panjang=0,opsi={}){
-    let xA = satutitik[0];
-    let yA = satutitik[1];
-    let tiB = [xA+panjang,yA];
-    let tiC = [xA+panjang,yA+panjang];
-    let tiD = [xA,yA+panjang];
-    let listtitik = `${xA},${yA} ${tiB[0]},${tiB[1]} ${tiC[0]},${tiC[1]} ${tiD[0]},${tiD[1]}`
-    let warnagaris = opsi.warnagaris || "black";
-      let isi = opsi.isi || "none";
-      let transparanisi = opsi.tampakisi || 1;
-      let tampakgaris = opsi.tampakgaris || 1;
-      let tebalgaris = opsi.tebalgaris || 1;
-      let rasio = opsi.rasio || 1;
-      return String.raw`<polygon points="${listtitik}" style="stroke:${warnagaris}; stroke-width:${tebalgaris/(rasio*16)}; fill:${isi}; opacity:${transparanisi}; stroke-opacity:${tampakgaris}"/>`;
-}
-
-//setengah lingkaran
-function svgsetling(titikawal=[],titikakhir=[],opsi={}){
-let x1 = titikawal[0];
-let y1 = titikawal[1];
-let x2 = titikakhir[0];
-let y2 = titikakhir[1];
-let r = panjanggaris([titikawal,titikakhir])/2;
-let tebal = opsi.tebal || 1;
-let warnagaris = opsi.warnagaris || "black";
-let isi = opsi.isi || "none";
-let transparanisi = opsi.tampakisi || 1;
-let tampakgaris = opsi.tampakgaris || 1;
-let tutup = opsi.tutup || 0;
-let tekstutup = "";
-if(tutup==1){
-    tekstutup = "z";
-}
-return String.raw`<path d="M ${x1} ${y1}
-A ${r} ${r} 0 0 1 ${x2} ${y2}
-${tekstutup}" stroke="${warnagaris}" fill="${isi}" stroke-width="${tebal}" fill-opacity="${transparanisi}" stroke-opacity="${tampakgaris}"/>`
-}
-
-//kepala panah
-
-//gradien
-function gradien(garis=[]){
-let titik1 = garis[0];
-let titik2 = garis[1];
-let x1 = titik1[0];
-let y1 = titik1[1];
-let x2 = titik2[0];
-let y2 = titik2[1];
-if(x1==x2){
-    if(y1==y2){
-        return NaN;
-    }else{return Infinity}
-}else{return (y2-y1)/(x2-x1)}
-}
-
-//kasih garis pendek pada tengah segmen penanda sama panjang
-function tandaSamaPanjang(titikA, titikB, p=1,opsi={}) {
-    let tbl = opsi.tebalgaris || 1;
-    let warna = opsi.warna || "black";
-    let dash = opsi.dash || "";
-    let tampakgaris = opsi.tampakgaris || 1;
-    // Menghitung titik tengah garis AB
-    let midPoint = {x: (titikA[0] + titikB[0]) / 2, y: (titikA[1] + titikB[1]) / 2};
-    // Menghitung gradien garis AB
-    let gradientAB = (titikB[1] - titikA[1]) / (titikB[0] - titikA[0]);
-    let titikC = [];
-    let titikD = []
-    if(gradientAB!=0){
-        // Gradien garis yang tegak lurus dengan garis AB adalah -1 / gradientAB
-    let gradientPerpendicular = -1 / gradientAB;
-    // Menghitung perubahan x dan y berdasarkan panjang p dan gradien
-    let dx = p / Math.sqrt(1 + Math.pow(gradientPerpendicular, 2));
-    let dy = gradientPerpendicular * dx;
-    // Menghitung koordinat titik C dan D
-    titikC = [midPoint.x + dx, midPoint.y + dy];
-    titikD = [midPoint.x - dx, midPoint.y - dy];
-    
-    }
-    if(gradientAB==0){
-    titikC = [midPoint.x,midPoint.y-p/2];
-    titikD = [midPoint.x,midPoint.y+p/2];
-    }
-    return String.raw`<line x1="${titikC[0]}" y1="${titikC[1]}"
-    x2="${titikD[0]}" y2="${titikD[1]}"
-    stroke="${warna}"
-    stroke-width="${tbl}" stroke-dasharray="${dash}" stroke-opacity="${tampakgaris}"/>`
-    }
-
-    function tandaSamaPanjang2(titikA, titikB, p=1,opsi={}) {
-        let tbl = opsi.tebalgaris || 1;
-        let warna = opsi.warna || "black";
-        let dash = opsi.dash || "";
-        let tampakgaris = opsi.tampakgaris || 1;
-        let jarak = opsi.jarak || 1;
-        // Menghitung titik tengah garis AB
-        let midPoint = {x: (titikA[0] + titikB[0]) / 2, y: (titikA[1] + titikB[1]) / 2};
-        let midPoint1 = {x: midPoint.x-(jarak*(titikB[0]-titikA[0]))/panjanggaris([titikA,titikB]), y: midPoint.y-(jarak*(titikB[1]-titikA[1]))/panjanggaris([titikA,titikB])};
-        let midPoint2 = {x: midPoint.x+(jarak*(titikB[0]-titikA[0]))/panjanggaris([titikA,titikB]), y: midPoint.y+(jarak*(titikB[1]-titikA[1]))/panjanggaris([titikA,titikB])};
-        // Menghitung gradien garis AB
-        let gradientAB = (titikB[1] - titikA[1]) / (titikB[0] - titikA[0]);
-        let titikC = [];
-        let titikD = [];
-        let titikE = [];
-        let titikF = [];
-        if(gradientAB!=0){
-            // Gradien garis yang tegak lurus dengan garis AB adalah -1 / gradientAB
-        let gradientPerpendicular = -1 / gradientAB;
-        // Menghitung perubahan x dan y berdasarkan panjang p dan gradien
-        let dx = p / Math.sqrt(1 + Math.pow(gradientPerpendicular, 2));
-        let dy = gradientPerpendicular * dx;
-        // Menghitung koordinat titik C dan D
-        titikC = [midPoint1.x + dx, midPoint1.y + dy];
-        titikD = [midPoint1.x - dx, midPoint1.y - dy];
-        titikE = [midPoint2.x + dx, midPoint2.y + dy];
-        titikF = [midPoint2.x - dx, midPoint2.y - dy];
-        }
-        if(gradientAB==0){
-        titikC = [midPoint1.x,midPoint1.y-p/2];
-        titikD = [midPoint1.x,midPoint1.y+p/2];
-        titikE = [midPoint2.x,midPoint2.y-p/2];
-        titikF = [midPoint2.x,midPoint2.y+p/2];
-        }
-        return String.raw`<line x1="${titikC[0]}" y1="${titikC[1]}"
-        x2="${titikD[0]}" y2="${titikD[1]}"
-        stroke="${warna}"
-        stroke-width="${tbl}" stroke-dasharray="${dash}" stroke-opacity="${tampakgaris}"/>
-        <line x1="${titikE[0]}" y1="${titikE[1]}"
-        x2="${titikF[0]}" y2="${titikF[1]}"
-        stroke="${warna}"
-        stroke-width="${tbl}" stroke-dasharray="${dash}" stroke-opacity="${tampakgaris}"/>`
-        }
-
-function titikberat(titik1=[], titik2=[], titik3=[]) {
-    let x1 = titik1[0];
-    let y1 = titik1[1];
-    let x2 = titik2[0];
-    let y2 = titik2[1];
-    let x3 = titik3[0];
-    let y3 = titik3[1];
-    var centroidX = (x1 + x2 + x3) / 3;
-    var centroidY = (y1 + y2 + y3) / 3;
-    
-    return [centroidX, centroidY];
-  }
-
-  //kommbinasi n memilih r
-  function komb(n, r) {
-    return Math.round(faktorial(n) / (faktorial(r) * faktorial(n - r)));
-}
-
-function C(n,r){
-    return Math.round(faktorial(n) / (faktorial(r) * faktorial(n - r)));
-}
-
-//penjabaran faktorial n
-function jabarfakt(n) {
-    let hasil = "";
-    for (let i = n; i > 0; i--) {
-        if (i !== n) {
-            hasil += "\\cdot";
-        }
-        hasil += i;
-    }
     return hasil;
-}
- 
-//Membulatkan bilangan desimal, hingga n digit di belakang koma
-function buldes(bil, n) {
-    let faktor = Math.pow(10, n);
-    return Math.round(bil * faktor) / faktor;
-}
+};
 
-//membuat koordinat cartesius
-function kocabuat(idtempatSVG="",intervalSumbuX=[],intervalSumbuY=[],opsi={}){
-    let xMin = intervalSumbuX[0];
-    let xMax = intervalSumbuX[1];
-    let yMin = intervalSumbuY[0];
-    let yMax = intervalSumbuY[1];
-    //rasio jarak antar tik
-    let rTik = opsi.rTik || 1;
-    //rasio jarak antar tik sumbu x
-    let rTikX = opsi.rTikX || rTik;
-    //rasio jarak antar tik sumbu y
-    let rTikY = opsi.rTikY || rTik;
-    //Interval di sumbu x
-    let intervalX = opsi.intervalX || 1;
-    //interval di sumbu y
-    let intervalY = opsi.intervalY || 1;
-    //jarak antar tik real
-    let jarakTik = opsi.jarakTik || 30;
-    let jarakTikX = opsi.jarakTikX || jarakTik*intervalX;
-    let jarakTikY = opsi.jarakTikY || jarakTik*intervalY;
-    let panjangTik = 7;
-    let banyakTikKiri = 0;
-    let banyakTikKanan = 0;
-    let banyakTikBawah = 0;
-    let banyakTikAtas = 0;
-    let ukuranAngkaSumbu = opsi.ukuranAngkaSumbu || 1;
-    let margin = opsi.margin || 0;
-    let lebarKiri = 1;
-    let lebarKanan = 1;
-    let batasKiri = xMin-1;
-    let batasKanan = xMax+1;
-    let batasBawah = yMin-1;
-    let batasAtas = yMax+1;
-    if(rTikX!=1){
-        jarakTikX=jarakTikX*rTikX
+/**
+ * Membuat array dengan formasi "Lembah" (Menurun sampai tengah, lalu menaik).
+ * Total dari seluruh elemen dijamin sama persis dengan parameter 'jumlah'.
+ */
+const arrayLembah = (banyakBilangan, jumlah) => {
+    // 1. Validasi Input Mutlak
+    if (banyakBilangan <= 0 || jumlah <= 0) {
+        throw new Error("MATEMATIKIN: banyakBilangan dan jumlah harus lebih dari 0.");
     }
-    if(rTikY!=1){
-        jarakTikY=jarakTikY*rTikY
+    if (jumlah < banyakBilangan) {
+        throw new Error("MATEMATIKIN: 'jumlah' minimal harus sama dengan 'banyakBilangan'.");
     }
-    if(xMin<0){
-        banyakTikKiri = Math.floor(Math.abs(xMin)/intervalX)
-        lebarKiri = (Math.floor(Math.abs(xMin)/intervalX)+1)*jarakTikX
-        batasKiri = -(banyakTikKiri+1)*intervalX
-    }else{lebarKiri = jarakTikX;
-    batasKiri = -1};
-    if(xMax>0){
-        banyakTikKanan = Math.floor(xMax/intervalX);
-        lebarKanan = (Math.floor(xMax/intervalX)+1)*jarakTikX
-        //batasKanan = (banyakTikKanan+1)*intervalX
-    }else{lebarKanan = jarakTikX;
-    batasKanan = 1};
-    let lebar = lebarKiri+lebarKanan;
-    let banyakTikX = banyakTikKiri+banyakTikKanan+1;
-    let tinggiBawah = 1;
-    let tinggiAtas = 1;
-    if(yMin<0){
-        banyakTikBawah = Math.floor(Math.abs(yMin)/intervalY)
-        tinggiBawah = (Math.floor(Math.abs(yMin)/intervalY)+1)*jarakTikY
-        batasBawah = -(banyakTikBawah+1)*intervalY
-    }else{tinggiBawah = jarakTikY;
-    batasBawah = -1};
-    if(yMax>0){
-        banyakTikAtas = Math.floor(yMax/intervalY);
-        tinggiAtas = (Math.floor(yMax/intervalY)+1)*jarakTikY
-        batasAtas = (banyakTikAtas+1)*intervalY
-    }else{tinggiAtas = jarakTikY;
-    batasAtas = 1};
-    let banyakTikY = banyakTikBawah+banyakTikAtas+1;
-    let tinggi = tinggiBawah+tinggiAtas;
-    let kodeTikX = "";
-    let kodeTikY = "";
-    for(let i=0;i<banyakTikX;i++){
-        kodeTikX += svggaris([[(i+1)*jarakTikX,tinggiAtas],[(i+1)*jarakTikX,tinggiAtas+panjangTik]]);
-        if(i-banyakTikKiri!=0){
-            kodeTikX += svglabeltitik([(i+1)*jarakTikX,tinggiAtas+panjangTik],(i-banyakTikKiri)*intervalX,{anchor: "middle", baseline: "hanging",yplus: 2})
+
+    // 2. Distribusi dasar yang aman
+    let arr = Array(banyakBilangan).fill(Math.floor(jumlah / banyakBilangan));
+    let sisa = jumlah % banyakBilangan;
+
+    while (sisa > 0) {
+        arr[Math.floor(Math.random() * banyakBilangan)]++;
+        sisa--;
+    }
+
+    // 3. Variasi acak agar tidak monoton
+    for (let i = 0; i < banyakBilangan; i++) {
+        let idx1 = Math.floor(Math.random() * banyakBilangan);
+        let idx2 = Math.floor(Math.random() * banyakBilangan);
+        if (arr[idx1] > 1 && idx1 !== idx2) {
+            arr[idx1]--;
+            arr[idx2]++;
         }
     }
-    for(let i=0;i<banyakTikY;i++){
-        kodeTikY += svggaris([[lebarKiri,(i+1)*jarakTikY],[lebarKiri-panjangTik,(i+1)*jarakTikY]])
-        if(i-banyakTikAtas!=0){
-            kodeTikY += svglabeltitik([lebarKiri-panjangTik,(i+1)*jarakTikY],(banyakTikAtas-i)*intervalY,{anchor: "end", baseline: "central",xplus: -2})
+
+    // 4. PERUBAHAN KUNCI: Urutkan array dari Terbesar ke Terkecil (Descending)
+    arr.sort((a, b) => b - a);
+
+    // 5. Teknik Two Pointers untuk menyusun formasi Lembah
+    let hasil = new Array(banyakBilangan);
+    let kiri = 0;
+    let kanan = banyakBilangan - 1;
+
+    for (let i = 0; i < banyakBilangan; i++) {
+        if (i % 2 === 0) {
+            hasil[kiri] = arr[i];
+            kiri++;
+        } else {
+            hasil[kanan] = arr[i];
+            kanan--;
         }
     }
-    let skalaX = lebar/(batasKanan-batasKiri);
-    let skalaY = tinggi/(batasAtas-batasBawah);
-    let tepiKiri = -lebarKiri*intervalX/jarakTikX;
-    let tepiKanan = lebarKanan*intervalX/jarakTikX;
-    let tepiBawah = -tinggiBawah*intervalY/jarakTikY;
-    let tepiAtas = tinggiAtas*intervalY/jarakTikY;
-    document.getElementById(idtempatSVG).innerHTML = String.raw`<svg xmlns='http://www.w3.org/2000/svg' style='max-width: ${lebar+2*margin}px; max-height: ${tinggi+2*margin}px;' viewbox='${-margin} ${-margin} ${lebar+2*margin} ${tinggi+2*margin}'>
-    <g id='${idtempatSVG}_svg'></g>
-    ${svggaris([[0,tinggiAtas],[lebar,tinggiAtas]],{kepalapanah: {lebar: 10}})}
-    ${svggaris([[lebarKiri,tinggi],[lebarKiri,0]],{kepalapanah: {lebar: 10}})}
-    ${kodeTikX}${kodeTikY}
-    ${svglabeltitik([lebar,tinggiAtas],"X",{anchor: "end", baseline: "hanging",yplus: 8})}
-    ${svglabeltitik([lebarKiri,0],"Y",{anchor: "end", baseline: "hanging",xplus: -8})}
-    </svg>`
-    return {id: idtempatSVG+'_svg',sumbux: intervalSumbuX, sumbuy: intervalSumbuY,jarakTikX: jarakTikX,jarakTikY: jarakTikY,lebarKiri: lebarKiri, lebarKanan: lebarKanan, lebar: lebar,tinggiBawah: tinggiBawah, tinggiAtas: tinggiAtas,tinggi: tinggi,banyakTikKiri: banyakTikKiri, banyakTikKanan: banyakTikKanan, banyakTikBawah: banyakTikBawah, banyakTikAtas: banyakTikAtas, banyakTikX:banyakTikX, banyakTikY: banyakTikY,margin: margin, intervalX: intervalX, intervalY: intervalY, batasAtas: batasAtas, batasBawah:batasBawah, batasKanan:batasKanan, batasKiri:batasKiri,skalaX:skalaX,skalaY:skalaY,tepiKiri:tepiKiri,tepiBawah:tepiBawah,tepiKanan:tepiKanan,tepiAtas:tepiAtas}
-}
 
-//koca Segmen
-function kocaSegmen(variabelKoca,garis=[],opsi={}){
-    let tbl = opsi.tebalgaris || 1;
-    let x1 = garis[0][0];
-    let y1 = garis[0][1];
-    let x2 = garis[1][0];
-    let y2 = garis[1][1];
-    let warna = opsi.warna || "black";
-    let dash = opsi.dash || "";
-    let tampakgaris = opsi.tampakgaris || 1;
-    document.getElementById(variabelKoca.id).innerHTML += String.raw`<line x1="${variabelKoca.lebarKiri+variabelKoca.jarakTikX*x1/variabelKoca.intervalX}" y1="${variabelKoca.tinggiBawah+variabelKoca.jarakTikY*y1/variabelKoca.intervalY}"
-    x2="${variabelKoca.lebarKiri+variabelKoca.jarakTikX*x2/variabelKoca.intervalX}" y2="${variabelKoca.tinggiBawah+variabelKoca.jarakTikY*y2/variabelKoca.intervalY}"
-    stroke="${warna}"
-    stroke-width="${tbl}" stroke-dasharray="${dash}" stroke-opacity="${tampakgaris}" transform="translate(0,${variabelKoca.tinggi}) scale(1,-1)"/>`
-    return {titik1: garis[0],titik2: garis[1],panjang: Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2))}
-}
+    return hasil;
+};
 
-function kocaLingkaran(variabelKoca,titikPusat=[],jarijari=0,opsi={}){
-    let cx = titikPusat[0];
-    let cy = titikPusat[1];
-    let tebal = opsi.tebal || 1;
-    let warnagaris = opsi.warnagaris || "black";
-    let isi = opsi.isi || "none";
-    let skala = opsi.skala || variabelKoca.lebar/(variabelKoca.batasKanan-variabelKoca.batasKiri);
-    let isikode = String.raw`<ellipse cx="${variabelKoca.lebarKiri+variabelKoca.jarakTikX*cx/variabelKoca.intervalX}" cy="${variabelKoca.tinggiBawah+variabelKoca.jarakTikY*cy/variabelKoca.intervalY}" rx="${variabelKoca.jarakTikX*jarijari/variabelKoca.intervalX}" fill="${isi}" stroke="${warnagaris}" ry="${variabelKoca.jarakTikY*jarijari/variabelKoca.intervalY}" transform="translate(0,${variabelKoca.tinggi}) scale(1,-1)"  />`;
-    document.getElementById(variabelKoca.id).innerHTML += isikode;
-}
+/**
+ * Memformat angka menjadi standar ribuan dan desimal Indonesia.
+ * Otomatis menggunakan titik (.) untuk ribuan dan koma (,) untuk desimal.
+ */
+const formatRibuan = (angka = 0) => {
+    // 1. Validasi Input Mutlak
+    if (typeof angka !== 'number' || !Number.isFinite(angka)) {
+        throw new Error("MATEMATIKIN: Input harus berupa angka yang valid.");
+    }
 
-//koca Segi Banyak
-function kocaSegi(variabelKoca,kumpulantitik=[],opsi={}){
-    let listtitik = `${variabelKoca.lebarKiri+variabelKoca.jarakTikX*kumpulantitik[0][0]/variabelKoca.intervalX},${variabelKoca.tinggiBawah+variabelKoca.jarakTikY*kumpulantitik[0][1]/variabelKoca.intervalY} `;
-    for (var i = 1; i < kumpulantitik.length; i++) {
-        listtitik += String.raw`${variabelKoca.lebarKiri+variabelKoca.jarakTikX*kumpulantitik[i][0]/variabelKoca.intervalX},${variabelKoca.tinggiBawah+variabelKoca.jarakTikY*kumpulantitik[i][1]/variabelKoca.intervalY} `;
-      }
-      let warnagaris = opsi.warnagaris || "black";
-      let isi = opsi.isi || "none";
-      let transparanisi = opsi.tampakisi || 1;
-      let tampakgaris = opsi.tampakgaris || 1;
-      let tebalgaris = opsi.tebalgaris || 1;
-      let join = opsi.join || "miter";
-      document.getElementById(variabelKoca.id).innerHTML += String.raw`<polygon points="${listtitik}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; fill:${isi}; opacity:${transparanisi}; stroke-opacity:${tampakgaris}; stroke-linejoin:${join}" transform="translate(0,${variabelKoca.tinggi}) scale(1,-1)"/>`;
-      return {kumpulantitik: kumpulantitik}
-}
+    // 2. Eksekusi format lokalisasi Indonesia ('id-ID')
+    return angka.toLocaleString('id-ID');
+};
 
-function dfung(f,x,opsi={}){
-    let j = opsi.h || 1;
-    let f_2 = f(x-2*j);
-    let f_1 = f(x-j);
-    let f1 = f(x+j);
-    let f2 = f(x+2*j);
-    return (-f2+8*f1-8*f_1+f_2)/(12*j);
-}
-function kocaGrafung(variabelKoca,f,opsi={}){
-    let metode = opsi.metode || 1;
-    let iterasi = opsi.iterasi || 100;
-    let xterkecil = opsi.xterkecil || variabelKoca.tepiKiri;
-    let xmax = opsi.xmax || variabelKoca.tepiKanan;
-    let tbl = opsi.tebalgaris || 1;
-    let warna = opsi.warna || "black"
-    let delta = (xmax-xterkecil)/iterasi;
-    let titikfungsi = [];
-    let grad = [];
-    let titikKontrol = [];
-    let titikKontrol2 = [];
-    for(let i=0;i<iterasi+1;i++){
-        titikfungsi.push([xterkecil+delta*i,f(xterkecil+delta*i)]);
-        grad.push(dfung(f,xterkecil+delta*i));
+/**
+* Menghitung panjang garis (jarak) antara dua titik koordinat.
+* Mendukung geometri 2D, 3D, hingga n-dimensi secara otomatis.
+*/
+const panjangGaris = (titik1, titik2) => {
+    // 1. Fleksibilitas Input: 
+    // Mendeteksi jika pengguna memasukkan data dalam format nested array [[x1, y1], [x2, y2]]
+    if (Array.isArray(titik1) && titik1.length === 2 && Array.isArray(titik1[0]) && titik2 === undefined) {
+        titik2 = titik1[1];
+        titik1 = titik1[0];
+    }
+
+    // 2. Validasi Syarat Mutlak: Kedua titik harus memiliki dimensi yang sama
+    if (!Array.isArray(titik1) || !Array.isArray(titik2) || titik1.length !== titik2.length) {
+        throw new Error("MATEMATIKIN: Input harus berupa dua koordinat titik dengan dimensi yang sama.");
+    }
+
+    // 3. Cari selisih jarak pada masing-masing sumbu (dx, dy, dz, dst.)
+    const selisihSumbu = titik1.map((koordinat, indeks) => koordinat - titik2[indeks]);
+
+    // 4. Eksekusi dengan Math.hypot (Menghitung akar dari jumlah kuadrat secara instan)
+    // Operator spread (...) akan mengeluarkan isi array menjadi argumen individual
+    return Math.hypot(...selisihSumbu);
+};
+
+/**
+ * Menghitung titik potong antara dua buah garis.
+ * Menggunakan metode Determinan untuk menghindari jebakan garis vertikal (Infinity).
+ * Mengembalikan koordinat [x, y].
+ */
+const titikPotong = (garis1, garis2) => {
+    // 1. Destrukturisasi Array (Membuat variabel lebih rapi tanpa [0][1] yang membingungkan)
+    const [[x1, y1], [x2, y2]] = garis1;
+    const [[x3, y3], [x4, y4]] = garis2;
+
+    // 2. Hitung Penyebut (Determinan Utama)
+    const penyebut = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+
+    // 3. Validasi Mutlak: Garis Sejajar atau Berimpit
+    // Jika penyebut 0, kedua garis berjalan sejajar dan tidak akan pernah berpotongan
+    if (penyebut === 0) {
+        throw new Error("MATEMATIKIN: Garis sejajar atau berimpit, tidak memiliki titik potong.");
+    }
+
+    // 4. Kalkulasi Pembilang
+    const t1 = (x1 * y2) - (y1 * x2);
+    const t2 = (x3 * y4) - (y3 * x4);
+
+    // 5. Eksekusi Hasil Akhir
+    const xPotong = (t1 * (x3 - x4) - (x1 - x2) * t2) / penyebut;
+    const yPotong = (t1 * (y3 - y4) - (y1 - y2) * t2) / penyebut;
+
+    return [xPotong, yPotong];
+};
+
+/**
+ * Mencari koordinat titik yang membagi garis dari titik1 ke titik2 dengan perbandingan m : n.
+ * Secara otomatis mendukung koordinat 2D, 3D, hingga n-dimensi.
+ */
+const titikBagiGaris = (titik1, titik2, m = 1, n = 1) => {
+    // 1. Validasi Mutlak: Memastikan dimensi (panjang array) kedua titik sama
+    if (!Array.isArray(titik1) || !Array.isArray(titik2) || titik1.length !== titik2.length) {
+        throw new Error("MATEMATIKIN: Input harus berupa array koordinat dengan dimensi yang sama.");
+    }
+
+    // 2. Proteksi Matematika: Mencegah pembagian dengan nol
+    if (m + n === 0) {
+        throw new Error("MATEMATIKIN: Jumlah rasio perbandingan (m + n) tidak boleh bernilai nol.");
+    }
+
+    // 3. Eksekusi fungsional untuk seluruh sumbu (X, Y, Z, dst)
+    // Rumus Baku: (m * X2 + n * X1) / (m + n)
+    return titik1.map((koordinat1, indeks) => {
+        return (m * titik2[indeks] + n * koordinat1) / (m + n);
+    });
+};
+
+/**
+ * Mencari titik tengah di antara dua koordinat.
+ */
+const titikTengah = (titik1, titik2) => {
+    // Terapkan prinsip DRY dengan mendelegasikan tugas ke titikBagiGaris
+    // Titik tengah adalah titik yang membagi garis dengan rasio mutlak 1 : 1
+    return titikBagiGaris(titik1, titik2, 1, 1);
+};
+
+/**
+ * Mencari titik pusat lingkaran yang melewati 3 titik koordinat (Titik Pusat Lingkaran Luar).
+ * Mengembalikan array koordinat [x, y].
+ */
+const pusatLingkaran3Titik = (titik1, titik2, titik3) => {
+    // 1. Destrukturisasi Modern (Bersih dan Ringkas)
+    const [x1, y1] = titik1;
+    const [x2, y2] = titik2;
+    const [x3, y3] = titik3;
+
+    // 2. Kalkulasi Vektor Skalar
+    const a = x2 - x1;
+    const b = y2 - y1;
+    const c = x3 - x2;
+    const d = y3 - y2;
+
+    const e = (a * (x1 + x2)) + (b * (y1 + y2));
+    const f = (c * (x2 + x3)) + (d * (y2 + y3));
+
+    // Determinan
+    const g = 2 * ((a * (y3 - y2)) - (d * (x2 - x3)));
+
+    // 3. Validasi Titik Kolinier
+    if (g === 0) {
+        throw new Error("MATEMATIKIN: Ketiga titik sejajar (kolinier), tidak dapat membentuk lingkaran.");
+    }
+
+    const centerX = ((d * e) - (b * f)) / g;
+    const centerY = ((a * f) - (c * e)) / g;
+
+    return [centerX, centerY];
+};
+
+/**
+ * Mencari panjang jari-jari lingkaran yang melewati 3 titik koordinat.
+ * Memanfaatkan Teorema Heron dan fungsi panjangGaris.
+ */
+const jariLingkaran3Titik = (titik1, titik2, titik3) => {
+    // 1. Manfaatkan fungsi panjangGaris yang sudah kita buat sebelumnya (Prinsip DRY!)
+    const sisiA = panjangGaris(titik1, titik2);
+    const sisiB = panjangGaris(titik2, titik3);
+    const sisiC = panjangGaris(titik3, titik1);
+
+    // 2. Setengah keliling segitiga (Semi-perimeter)
+    const s = (sisiA + sisiB + sisiC) / 2;
+
+    // 3. Hitung Luas dengan Teorema Heron
+    // Math.max(0, ...) digunakan sebagai pelindung ekstra terhadap inakurasi floating-point
+    // yang kadang menghasilkan angka negatif sangat kecil (misal -0.0000000001)
+    const luasSegitiga = Math.sqrt(Math.max(0, s * (s - sisiA) * (s - sisiB) * (s - sisiC)));
+
+    // 4. Validasi Luas Nol (Titik Kolinier)
+    if (luasSegitiga === 0) {
+        throw new Error("MATEMATIKIN: Ketiga titik sejajar, luas segitiga 0 sehingga jari-jari tak terhingga.");
+    }
+
+    // 5. Eksekusi Rumus Jari-jari Lingkaran Luar (R = abc / 4L)
+    return (sisiA * sisiB * sisiC) / (4 * luasSegitiga);
+};
+
+/**
+ * Menghitung gradien (kemiringan) dari sebuah garis yang melalui dua titik.
+ * Mendukung format nested array [[x1, y1], [x2, y2]] atau dua parameter ([x1, y1], [x2, y2]).
+ * Mengembalikan Infinity untuk garis vertikal, dan NaN untuk titik yang sama.
+ */
+const gradien = (titik1, titik2) => {
+    // 1. Fleksibilitas Input: Mendukung dua gaya penulisan koordinat
+    if (Array.isArray(titik1) && titik1.length === 2 && Array.isArray(titik1[0]) && titik2 === undefined) {
+        titik2 = titik1[1];
+        titik1 = titik1[0];
+    }
+
+    // 2. Validasi Mutlak: Pastikan input valid
+    if (!Array.isArray(titik1) || !Array.isArray(titik2)) {
+        throw new Error("MATEMATIKIN: Input harus berupa dua titik koordinat.");
+    }
+
+    // 3. Destrukturisasi Modern (Sangat ringkas)
+    const [x1, y1] = titik1;
+    const [x2, y2] = titik2;
+
+    // 4. Kalkulasi Delta (Selisih)
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+
+    // 5. Penanganan Kondisi Ekstrem (Edge Cases)
+    if (dx === 0) {
+        // Jika dy juga 0 (titik yang sama), kembalikan NaN. Jika tidak, Infinity (garis vertikal)
+        return dy === 0 ? NaN : Infinity;
+    }
+
+    // 6. Eksekusi Rumus Utama
+    return dy / dx;
+};
+
+/**
+ * Mencari titik berat (centroid) dari segitiga yang dibentuk oleh 3 titik.
+ * Mendukung koordinat 2D maupun 3D (X, Y, Z).
+ */
+const titikBerat = (...titik) => {
+    // 1. Validasi Input: Pastikan ada 3 titik
+    if (titik.length !== 3) {
+        throw new Error("MATEMATIKIN: Fungsi titikBerat membutuhkan tepat 3 titik koordinat.");
+    }
+
+    // 2. Validasi Dimensi: Pastikan semua titik memiliki jumlah dimensi yang sama
+    const dimensi = titik[0].length;
+    if (!titik.every(t => t.length === dimensi)) {
+        throw new Error("MATEMATIKIN: Semua titik harus memiliki dimensi yang sama (2D atau 3D).");
+    }
+
+    // 3. Eksekusi Fungsional: Menjumlahkan setiap sumbu lalu membaginya dengan 3
+    // Kita menggunakan .reduce untuk menjumlahkan koordinat, lalu .map untuk membaginya
+    return titik[0].map((_, indeks) => {
+        const jumlahSumbu = titik.reduce((total, t) => total + t[indeks], 0);
+        return jumlahSumbu / 3;
+    });
+};
+
+/**
+ * Menghitung Kombinasi (nCr). 
+ * Menggunakan algoritma iteratif untuk mencegah error 'Infinity' pada angka besar.
+ */
+const kombinasi = (n, r) => {
+    // 1. Validasi Matematis
+    if (typeof n !== 'number' || typeof r !== 'number') return 0;
+    if (n < 0 || r < 0 || r > n) return 0;
+
+    // Basis kasus
+    if (r === 0 || r === n) return 1;
+
+    // 2. Optimasi Simetri: nCr = nC(n-r). 
+    // Contoh: C(100, 98) akan dihitung sebagai C(100, 2) agar jauh lebih cepat.
+    r = Math.min(r, n - r);
+
+    // 3. Eksekusi Iteratif (Tanpa Faktorial!)
+    let hasil = 1;
+    for (let i = 1; i <= r; i++) {
+        hasil = hasil * (n - i + 1) / i;
+    }
+
+    return Math.round(hasil);
+};
+
+// Cukup buat ALIAS agar fungsi C tidak memakan memori ganda
+const C = kombinasi;
+
+/**
+ * Menghitung Permutasi (nPr) - Banyaknya cara memilih r objek dari n objek dengan memperhatikan urutan.
+ */
+const permutasi = (n, r) => {
+    // Validasi Matematis
+    if (typeof n !== 'number' || typeof r !== 'number') return 0;
+    if (n < 0 || r < 0 || r > n) return 0;
+
+    // Eksekusi Iteratif (Lebih cepat dan aman dari faktorial rekursif)
+    let hasil = 1;
+    for (let i = 0; i < r; i++) {
+        hasil *= (n - i);
+    }
+
+    return Math.round(hasil);
+};
+
+// ALIAS untuk kemudahan pemanggilan
+const P = permutasi;
+
+/**
+ * Menjabarkan perhitungan faktorial menjadi format string LaTeX.
+ * Contoh output untuk n=4: "4 \cdot 3 \cdot 2 \cdot 1"
+ */
+const jabarFaktorial = (n) => {
+    // Validasi
+    if (!Number.isInteger(n) || n <= 0) return "";
+
+    // Array.from mencetak array [n, n-1, ..., 1], lalu join merangkainya dengan \cdot
+    return Array.from({ length: n }, (_, i) => n - i).join(" \\cdot ");
+};
+
+/**
+ * Membulatkan bilangan desimal hingga 'n' digit di belakang koma secara presisi absolut.
+ */
+const bulatkanDesimal = (angka, desimal = 2) => {
+    if (typeof angka !== 'number') {
+        throw new Error("MATEMATIKIN: Input harus berupa angka.");
+    }
+
+    // Menggunakan trik manipulasi string eksponensial (e) 
+    // untuk mencegah inakurasi floating-point pada angka berakhiran 5.
+    return Number(Math.round(angka + "e" + desimal) + "e-" + desimal);
+};
+
+/**
+ * Menghitung nilai rata-rata (Mean) dari sekumpulan data.
+ * Otomatis membulatkan hasil ke 2 digit desimal untuk kerapian laporan.
+ */
+const mean = (arr) => {
+    // Validasi: Pastikan input adalah array dan tidak kosong
+    if (!Array.isArray(arr) || arr.length === 0) return 0;
+
+    // Jumlahkan semua elemen
+    const total = arr.reduce((akumulator, nilai) => akumulator + nilai, 0);
+
+    // Rata-rata = Total / Banyak Data
+    // Kita gunakan fungsi bulatkanDesimal dari ekosistem MATEMATIKIN sebelumnya
+    return bulatkanDesimal(total / arr.length, 2);
+};
+
+/**
+ * Mencari nilai tengah (Median).
+ * Otomatis menangani jumlah data ganjil (mengambil nilai tengah) 
+ * maupun genap (rata-rata dari dua nilai tengah).
+ */
+const median = (arr) => {
+    if (!Array.isArray(arr) || arr.length === 0) return 0;
+
+    // Gandakan array agar data aslinya tidak rusak, lalu urutkan (Kecil -> Besar)
+    const dataUrut = [...arr].sort((a, b) => a - b);
+    const titikTengah = Math.floor(dataUrut.length / 2);
+
+    // Jika jumlah data genap
+    if (dataUrut.length % 2 === 0) {
+        const nilaiTengahGenap = (dataUrut[titikTengah - 1] + dataUrut[titikTengah]) / 2;
+        return bulatkanDesimal(nilaiTengahGenap, 2);
+    }
+
+    // Jika jumlah data ganjil
+    return dataUrut[titikTengah];
+};
+
+/**
+ * Mencari nilai yang paling sering muncul (Modus).
+ * Mampu mengembalikan lebih dari satu nilai jika terjadi seri (bimodal/multimodal).
+ * Mengembalikan array kosong [] jika semua data frekuensinya sama (tidak ada modus).
+ */
+const modus = (arr) => {
+    if (!Array.isArray(arr) || arr.length === 0) return [];
+
+    const frekuensi = {};
+    let frekuensiTertinggi = 0;
+
+    // Peta frekuensi kemunculan setiap angka
+    arr.forEach(angka => {
+        frekuensi[angka] = (frekuensi[angka] || 0) + 1;
+        if (frekuensi[angka] > frekuensiTertinggi) {
+            frekuensiTertinggi = frekuensi[angka];
+        }
+    });
+
+    // Tarik semua angka yang mencapai frekuensi tertinggi
+    const daftarModus = Object.keys(frekuensi)
+        .filter(kunci => frekuensi[kunci] === frekuensiTertinggi)
+        .map(Number); // Ubah kembali dari string (kunci object) menjadi angka
+
+    // Jika semua angka memiliki frekuensi yang sama, berarti TIDAK ADA modus
+    if (daftarModus.length === Object.keys(frekuensi).length) {
+        return [];
+    }
+
+    // Urutkan array modus dari kecil ke besar agar rapi saat dicetak ke soal
+    return daftarModus.sort((a, b) => a - b);
+};
+
+/**
+ * Menghitung Varians (Ragam) Populasi dari sekumpulan data.
+ */
+const varians = (arr) => {
+    if (!Array.isArray(arr) || arr.length === 0) return 0;
+    
+    const rataRata = mean(arr); // Memanggil fungsi mean Anda
+    const jumlahKuadratSelisih = arr.reduce((total, angka) => {
+        return total + Math.pow(angka - rataRata, 2);
+    }, 0);
+    
+    return bulatkanDesimal(jumlahKuadratSelisih / arr.length, 2);
+};
+
+// (Opsional) Refactor fungsi simpanganBaku Anda agar lebih DRY (Don't Repeat Yourself):
+// const simpanganBaku = (arr) => bulatkanDesimal(Math.sqrt(varians(arr)), 2);
+
+/**
+ * Menghitung Simpangan Baku / Standar Deviasi (Populasi).
+ * Sangat berguna untuk mengetahui seberapa jauh nilai menyimpang dari rata-rata kelas.
+ */
+const simpanganBaku = (arr) => {
+    if (!Array.isArray(arr) || arr.length < 2) return 0;
+
+    bulatkanDesimal(Math.sqrt(varians(arr)), 2);
+};
+
+/**
+ * Menghasilkan opsi pilihan ganda (A, B, C, D, E) dengan distraktor otomatis.
+ * Output berupa array objek lengkap dengan status kebenaran (isBenar) untuk grading.
+ */
+const buatOpsiGanda = (jawabanBenar, toleransi = 1, jumlahOpsi = 5) => {
+    // 1. Validasi Input
+    if (typeof jawabanBenar !== 'number' || !Number.isFinite(jawabanBenar)) {
+        throw new Error("MATEMATIKIN: Jawaban benar harus berupa angka agar distraktor dapat dihitung.");
+    }
+
+    // 2. Inisialisasi keranjang dengan jawaban benar sudah berada di dalamnya
+    const kumpulanOpsi = [jawabanBenar];
+    const batasLoop = 100; // Pengaman agar browser tidak hang jika gagal mencari angka unik
+    let iterasi = 0;
+
+    // 3. Mesin Pembuat Pengecoh (Distraktor)
+    while (kumpulanOpsi.length < Math.min(jumlahOpsi, 26) && iterasi < batasLoop) {
+        // Mengundi arah selisih: bisa ke atas (+) atau ke bawah (-) 
+        // Rentang pengali: -3, -2, -1, 1, 2, 3 (0 dibuang)
+        let pengaliAcak = Math.floor(Math.random() * 7) - 3;
+        if (pengaliAcak === 0) pengaliAcak = 4; // Ganti 0 agar tidak menghasilkan jawaban ganda
+
+        // Buat angka pengecoh berdasarkan jarak toleransi
+        const pengecoh = jawabanBenar + (pengaliAcak * toleransi);
+
+        // Pastikan angka ini belum ada di dalam keranjang opsi
+        if (!kumpulanOpsi.includes(pengecoh)) {
+            kumpulanOpsi.push(pengecoh);
+        }
+        iterasi++;
+    }
+
+    // 4. Tahap Pengacakan Posisi (Algoritma Fisher-Yates Murni)
+    for (let i = kumpulanOpsi.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [kumpulanOpsi[i], kumpulanOpsi[j]] = [kumpulanOpsi[j], kumpulanOpsi[i]];
+    }
+
+    // 5. Pemetaan Abjad (A, B, C, D, E, dst.) dan Format Akhir
+    const abjad = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+    return kumpulanOpsi.map((nilai, indeks) => {
+        return {
+            opsi: abjad[indeks],
+            nilai: nilai, // Bisa dipadukan dengan formatRibuan() jika nilainya besar
+            isBenar: nilai === jawabanBenar
+        };
+    });
+};
+
+/**
+ * 1. FORMATTER RUPIAH
+ * Mengonversi angka mentah menjadi format mata uang Rupiah resmi (EYD).
+ * Otomatis membuang desimal ",00" jika angkanya adalah bilangan bulat.
+ */
+const formatRupiah = (angka = 0) => {
+    if (typeof angka !== 'number' || !Number.isFinite(angka)) return "Rp0";
+
+    // Menggunakan Intl.NumberFormat bawaan mesin JavaScript
+    // Jauh lebih cepat dan aman daripada menggunakan Regex manual
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0, // Hilangkan desimal jika tidak perlu
+        maximumFractionDigits: 2  // Maksimal 2 digit desimal (misal untuk sen)
+    }).format(angka);
+};
+
+/**
+ * 2. FORMATTER SATUAN (SIAP MATHJAX)
+ * Menggabungkan angka dengan satuan pengukurannya.
+ * Otomatis mendeteksi angka di akhir teks (misal: m2, cm3) dan 
+ * mengubahnya menjadi pangkat (superscript) berstandar LaTeX.
+ */
+const formatSatuan = (angka = 0, satuan = "") => {
+    if (typeof angka !== 'number' || !Number.isFinite(angka)) return "";
+
+    // Gunakan formatRibuan() yang sudah kita buat sebelumnya
+    // agar angkanya rapi sebelum digabung dengan satuan
+    const angkaRapi = angka.toLocaleString('id-ID');
+
+    if (!satuan) return angkaRapi;
+
+    // Regex Cerdas: Mencari angka di ujung string dan menambahkan simbol pangkat LaTeX
+    // Contoh: "cm2" -> "cm^{2}", "dm3" -> "dm^{3}"
+    const satuanBerpangkat = satuan.replace(/([+-]?\d+)$/, '^{$1}');
+
+    // \text{} digunakan agar huruf satuan berdiri tegak (tidak miring seperti variabel aljabar)
+    return `${angkaRapi} \\text{ ${satuanBerpangkat}}`;
+};
+
+
+/**
+ * Menghitung nilai turunan (gradien) dari sebuah fungsi matematika f(x) pada titik x tertentu
+ * menggunakan metode Hampiran Beda Hingga (Finite Difference) dengan 5-Point Stencil.
+ * Metode ini berstandar profesional karena sangat presisi (tingkat kesalahan O(h^4)) 
+ * dan jauh lebih akurat dibandingkan limit beda maju/mundur sederhana.
+ *
+ * @param {Function} f - Fungsi matematika yang akan dievaluasi (contoh: x => x*x).
+ * @param {number} x - Titik sumbu X di mana turunan akan dihitung.
+ * @param {Object} [opsi={}] - Parameter kustom (contoh: { h: 1e-5 } untuk ukuran langkah manual).
+ * @returns {number} Nilai turunan pertama (f'(x)) di titik x.
+ */
+const dfung = (f, x, opsi = {}) => {
+    // 1. Validasi Tipe Data dan Kelayakan Input
+    if (typeof f !== 'function') {
+        throw new Error("MATEMATIKIN [dfung]: Parameter pertama harus berupa fungsi (Function).");
+    }
+    if (typeof x !== 'number' || !Number.isFinite(x)) {
+        throw new Error("MATEMATIKIN [dfung]: Titik evaluasi (x) harus berupa bilangan terhingga (Finite Number).");
+    }
+
+    // 2. Menentukan Ukuran Langkah (Step Size / h)
+    // Jika tidak diberikan oleh pengguna, kita hitung h secara dinamis berdasarkan nilai x.
+    // Tujuannya untuk mencegah bencana "Catastrophic Cancellation" pada aritmatika Floating-Point.
+    // Konstanta 1e-4 adalah ukuran ideal untuk mesin 64-bit yang memakai algoritma 5-point stencil.
+    const h = opsi.h || (1e-4 * Math.max(1, Math.abs(x)));
+
+    try {
+        // 3. Evaluasi fungsi pada empat titik berdekatan secara simetris
+        const f_min2h = f(x - 2 * h);
+        const f_min1h = f(x - h);
+        const f_plus1h = f(x + h);
+        const f_plus2h = f(x + 2 * h);
+
+        // 4. Deteksi Anomali Asimtot (Pembagian dengan nol, akar negatif, dsb)
+        if (
+            !Number.isFinite(f_min2h) ||
+            !Number.isFinite(f_min1h) ||
+            !Number.isFinite(f_plus1h) ||
+            !Number.isFinite(f_plus2h)
+        ) {
+            return NaN; // Mengembalikan NaN jika fungsi tidak terdefinisi di sekitar titik x
+        }
+
+        // 5. Eksekusi Rumus Utama (5-Point Stencil Derivative)
+        // Formula: f'(x) ≈ [ -f(x+2h) + 8f(x+h) - 8f(x-h) + f(x-2h) ] / 12h
+        const turunan = (-f_plus2h + 8 * f_plus1h - 8 * f_min1h + f_min2h) / (12 * h);
+
+        // 6. Koreksi Presisi (Membulatkan angka bising mikroskopis menjadi 0 murni)
+        if (Math.abs(turunan) < 1e-12) return 0;
+
+        return turunan;
+    } catch (error) {
+        // 7. Pengamanan terhadap error internal fungsi f(x) milik user
+        throw new Error(`MATEMATIKIN [dfung]: Terjadi kesalahan saat mengevaluasi fungsi. Detail: ${error.message}`);
+    }
+};
+
+/**
+ * Menghitung Modulo Sejati. Sangat penting untuk fungsi rotasi, 
+ * kriptografi, atau aritmetika jam yang melibatkan angka negatif.
+ */
+const mod = (n, m) => {
+    if (m === 0) throw new Error("MATEMATIKIN: Modulo (pembagi) tidak boleh nol.");
+    
+    // Rumus penawar sisa bagi negatif JavaScript
+    return ((n % m) + m) % m;
+};
+
+/**
+ * Mencari akar-akar persamaan kuadrat (ax^2 + bx + c = 0).
+ * Mengembalikan array [x1, x2]. Jika akar imajiner, mengembalikan array kosong [].
+ */
+const akarKuadrat = (a, b, c) => {
+    const D = diskriminan(a, b, c); // Memanggil fungsi Anda sebelumnya
+    
+    // Jika D < 0, akarnya imajiner/kompleks (tidak berpotongan dengan sumbu X)
+    if (D < 0) return []; 
+    
+    // Jika D = 0, akar kembar (x1 = x2)
+    if (D === 0) {
+        const x = -b / (2 * a);
+        // Hilangkan -0 akibat inakurasi floating point
+        return [x === -0 ? 0 : x]; 
     }
     
-    for(let i=0;i<iterasi;i++){
-        let x1 = titikfungsi[i][0];
-        let y1 = titikfungsi[i][1];
-        let x2 = titikfungsi[i+1][0];
-        let y2 = titikfungsi[i+1][1];
-        let m1 = grad[i];
-        let m2 = grad[i+1];
-        let c1 = -(y1-y2-x1*m1+x2*m2)/(m1-m2);
-        let c2 = -(-y2*m1+y1*m2-x1*m1*m2+x2*m1*m2)/(m1-m2);
-        if(m1==m2){
-            c1 = (x1+x2)/2;
-            c2 = (y1+y2)/2;
-        }
-        titikKontrol.push([c1,c2])
-        titikKontrol2.push([(c1-variabelKoca.batasKiri),(-c2+variabelKoca.batasAtas)])
-    }
-    let titikfungsi2 = []
-    for(let i=0;i<titikfungsi.length;i++){
-        let x = titikfungsi[i][0];
-        let y = titikfungsi[i][1];
-        titikfungsi2.push([variabelKoca.lebarKiri+variabelKoca.jarakTikX*x/variabelKoca.intervalX,variabelKoca.tinggiBawah+variabelKoca.jarakTikY*y/variabelKoca.intervalY])
-    }
-    let kode = String.raw`M ${variabelKoca.lebarKiri+variabelKoca.jarakTikX*xterkecil/variabelKoca.intervalX} ${variabelKoca.tinggiBawah+variabelKoca.jarakTikY*f(xterkecil)/variabelKoca.intervalY} `;
-    let kode0 = kode;
-    for(let i=0;i<iterasi;i++){
-        kode+=String.raw`Q ${titikKontrol2[i][0]} ${titikKontrol2[i][1]} ${titikfungsi2[i+1][0]} ${titikfungsi2[i+1][1]}`;
-        kode0+=String.raw`L ${titikfungsi2[i+1][0]} ${titikfungsi2[i+1][1]} `;
-    }
-    if(metode==2){document.getElementById(variabelKoca.id).innerHTML += String.raw` <path d="${kode}" stroke="${warna}" fill="transparent" stroke-width="${tbl}" transform="translate(${-variabelKoca.batasKiri*variabelKoca.jarakTikX/variabelKoca.intervalX} ${variabelKoca.batasAtas*variabelKoca.jarakTikY/variabelKoca.intervalY}) scale(1 -1)"/>`}
-    else if(metode==1){
-        document.getElementById(variabelKoca.id).innerHTML += String.raw` <path d="${kode0}" stroke="${warna}" fill="transparent" stroke-width="${tbl}"  transform="translate(0,${variabelKoca.tinggi}) scale(1,-1)"/>`
-    }
+    // Jika D > 0, dua akar nyata berbeda
+    const akarD = Math.sqrt(D);
+    const x1 = (-b + akarD) / (2 * a);
+    const x2 = (-b - akarD) / (2 * a);
     
-    return {titikfungsi: titikfungsi,xmin:xterkecil,xmax:xmax,grad:grad,titikKontrol:titikKontrol,titikfungsi2:titikfungsi2,delta:delta,titikKontrol2:titikKontrol2,metode:metode}
-}
+    // Kembalikan akar dengan urutan dari yang terkecil ke terbesar
+    return [Math.min(x1, x2), Math.max(x1, x2)];
+};
 
-//koca label titik
-function kocaLabelTitik(variabelKoca,titik=[],namalabel="",opsi={}){
-    let ukuran = opsi.ukuran || 1;
-    let anchor = opsi.anchor || "start";
-    let baseline = opsi.baseline || "auto";
-    let xplus = opsi.xplus || 0;
-    let yplus = opsi.yplus || 0;
-    let font = opsi.font || `'Times New Roman', Times, serif`
-    document.getElementById(variabelKoca.id).innerHTML += String.raw`<text x="${variabelKoca.lebarKiri+variabelKoca.jarakTikX*(titik[0]+xplus)/variabelKoca.intervalX}"  y="${variabelKoca.tinggi+-(variabelKoca.tinggiBawah+variabelKoca.jarakTikY*(titik[1]+yplus)/variabelKoca.intervalY)}" text-anchor="${anchor}" dominant-baseline="${baseline}" style="font-family:${font}; font-size:${ukuran}em">${namalabel}</text>`;
-    return {titik:titik,label:namalabel,ukuran:ukuran,font:font}
-}
+/**
+ * Mengubah satuan sudut dari Derajat ke Radian.
+ */
+const rad = (derajat) => {
+    if (typeof derajat !== 'number') return NaN;
+    return (derajat * PI) / 180;
+};
 
-function geomBuat(id="",lebar=0,tinggi=0,opsi={}){
-    let rasio = opsi.rasio || 1;
-    let margin = opsi.margin || 0;
-    document.getElementById(id).innerHTML = String.raw`<svg id="${id}_svg" xmlns='http://www.w3.org/2000/svg' style='max-width: ${rasio*(lebar+2*margin)}px; max-height: ${rasio*(tinggi+2*margin)}px;' viewbox='${-rasio*margin} ${-rasio*margin} ${rasio*(lebar+2*margin)} ${rasio*(tinggi+2*margin)}'></svg>`;
-    return {id:id,lebar:lebar,tinggi:tinggi,rasio:rasio,margin:margin}
-}
+/**
+ * Mengubah satuan sudut dari Radian ke Derajat.
+ */
+const derajat = (radian) => {
+    if (typeof radian !== 'number') return NaN;
+    return (radian * 180) / PI;
+};
 
-function geomSegmen(variabelGeom,kumTitik,opsi={}){
-    let titik1 = kumTitik[0];
-    let titik2 = kumTitik[1];
-    let x1 = titik1[0];
-    let y1 = titik1[1];
-    let x2 = titik2[0];
-    let y2 = titik2[1];
-    let warna = opsi.warna || "black";
-    let tbl = opsi.tebal || 1;
-    let dash = opsi.dash || "";
-    let tampakgaris = opsi.tampak || 1;
-    document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<line x1="${x1*variabelGeom.rasio}" y1="${y1*variabelGeom.rasio}"
-    x2="${x2*variabelGeom.rasio}" y2="${y2*variabelGeom.rasio}"
-    stroke="${warna}"
-    stroke-width="${tbl}" stroke-dasharray="${dash}" stroke-opacity="${tampakgaris}"/>`;
-    return {kumTitik:kumTitik,warna:warna,tebal:tbl}
-}
-
-function geomSegi(variabelGeom,kumTitik,opsi={}){
-    let listtitik = `${kumTitik[0][0]*variabelGeom.rasio},${kumTitik[0][1]*variabelGeom.rasio} `;
-    for (var i = 1; i < kumTitik.length; i++) {
-        listtitik += String.raw`${kumTitik[i][0]*variabelGeom.rasio},${kumTitik[i][1]*variabelGeom.rasio} `;
-      }
-      let warnagaris = opsi.warnagaris || "black";
-      let isi = opsi.isi || "none";
-      let transparanisi = opsi.tampakisi || 1;
-      let tampakgaris = opsi.tampakgaris || 1;
-      let tebalgaris = opsi.tebalgaris || 1;
-      let join = opsi.join || "miter";
-    document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<polygon points="${listtitik}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; fill:${isi}; opacity:${transparanisi}; stroke-opacity:${tampakgaris}; stroke-linejoin:${join}"/>`;
-    return {kumTitik:kumTitik,warnagaris:warnagaris,isi:isi,tampakisi:transparanisi,tampakgaris:tampakgaris,tebalgaris:tebalgaris,join:join}
-}
-
-function geomLing(variabelGeom,titikPusat=[],jarijari=0,opsi={}){
-    let xp = titikPusat[0];
-    let yp = titikPusat[1];
-    let warnagaris = opsi.warnagaris || "black";
-    let tebalgaris = opsi.tebalgaris || 1;
-    let isi = opsi.isi || "none";
-    let transparanisi = opsi.tampakisi || 1;
-    let tampakgaris = opsi.tampakgaris || 1;
-    document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<circle r="${jarijari*variabelGeom.rasio}" cx="${xp*variabelGeom.rasio}" cy="${yp*variabelGeom.rasio}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; fill:${isi}; opacity:${transparanisi}; stroke-opacity:${tampakgaris};"/>`;
-    return {titikPusat:titikPusat,jarijari:jarijari}
-}
-
-function geomBusur(variabelGeom,titikPusat=[],titikAwal=[],titikAkhir=[],opsi={}){
-    let xp = titikPusat[0];
-    let yp = titikPusat[1];
-    let x1 = titikAwal[0];
-    let y1 = titikAwal[1];
-    let radius = Math.sqrt(Math.pow(x1-xp,2)+Math.pow(y1-yp,2));
-    let x2 = titikAkhir[0];
-    let y2 = titikAkhir[1];
-    let busurbesar = opsi.busurbesar || 0;
-    let arahrotasi = opsi.arahrotasi || 0;
-    let tertutup = opsi.tertutup || 0;
-    let sweep = opsi.sweep || 0;
-    let kodeTutup = "";
-    if(tertutup){
-        kodeTutup = "Z"
-    }
-    let warnagaris = opsi.warnagaris || "black";
-    let tebalgaris = opsi.tebalgaris || 1;
-    let isi = opsi.isi || "none";
-    let transparanisi = opsi.tampakisi || 1;
-    let tampakgaris = opsi.tampakgaris || 1;
-    let join = opsi.join || "mitter";
-    let isid = `M ${x1*variabelGeom.rasio} ${y1*variabelGeom.rasio} A ${radius*variabelGeom.rasio} ${radius*variabelGeom.rasio} ${arahrotasi} ${busurbesar} ${sweep} ${x2*variabelGeom.rasio} ${y2*variabelGeom.rasio} ${kodeTutup}`;
-    document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<path d="${isid}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; fill:${isi}; opacity:${transparanisi}; stroke-opacity:${tampakgaris}; stroke-linejoin:${join}"/>`;
-    return {titikPusat:titikPusat,titikAwal:titikAwal,titikAkhir:titikAkhir,r:radius}
-}
-
-function geomSetengahLing(variabelGeom,titikPusat=[],titikAwal=[],opsi={}){
-    let xp = titikPusat[0];
-    let yp = titikPusat[1];
-    let x1 = titikAwal[0];
-    let y1 = titikAwal[1];
-    let radius = Math.sqrt(Math.pow(x1-xp,2)+Math.pow(y1-yp,2));
-    let x2 = 2*xp-x1;
-    let y2 = 2*yp-y1;
-    let busurbesar = opsi.busurbesar || 1;
-    let arahrotasi = opsi.arahrotasi || 1;
-    let tertutup = opsi.tertutup || 0;
-    let sweep = opsi.sweep || 1;
-    let kodeTutup = "";
-    if(tertutup){
-        kodeTutup = "Z"
-    }
-    let warnagaris = opsi.warnagaris || "black";
-    let tebalgaris = opsi.tebalgaris || 1;
-    let isi = opsi.isi || "none";
-    let transparanisi = opsi.tampakisi || 1;
-    let tampakgaris = opsi.tampakgaris || 1;
-    let join = opsi.join || "mitter";
-    let isid = `M ${x1*variabelGeom.rasio} ${y1*variabelGeom.rasio} A ${radius*variabelGeom.rasio} ${radius*variabelGeom.rasio} ${arahrotasi} ${busurbesar} ${sweep} ${x2*variabelGeom.rasio} ${y2*variabelGeom.rasio} ${kodeTutup}`;
-    document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<path d="${isid}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; fill:${isi}; opacity:${transparanisi}; stroke-opacity:${tampakgaris}; stroke-linejoin:${join}"/>`;
-    return {titikPusat:titikPusat,r:radius}
-}
-
-function geomLabelTitik(variabelGeom,titik=[0,0],label="",opsi={}){
-    let ukuran = opsi.ukuran || 1;
-    let anchor = opsi.anchor || "start";
-    let baseline = opsi.baseline || "auto";
-    let xplus = opsi.xplus || 0;
-    let yplus = opsi.yplus || 0;
-    let warna = opsi.warna || "black"
-    document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<text x="${variabelGeom.rasio*(titik[0]+xplus)}"  y="${variabelGeom.rasio*(titik[1]+yplus)}" text-anchor="${anchor}" dominant-baseline="${baseline}" style="font-family:'Times New Roman', Times, serif; font-size:${ukuran}em; fill:${warna}">${label}</text>`;
-    return {titik:titik,label:label,ukuran:ukuran,warna:warna}
-}
-
-function geomLabelGaris(variabelGeom,kumTitik,label="",opsi={}){
-    let ukuran = opsi.ukuran || 1;
-    let anchor = opsi.anchor || "start";
-    let baseline = opsi.baseline || "auto";
-    let xplus = opsi.xplus || 0;
-    let yplus = opsi.yplus || 0;
-    let warna = opsi.warna || "black";
-    document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<text x="${variabelGeom.rasio*((kumTitik[0][0]+kumTitik[1][0])/2+xplus)}"  y="${variabelGeom.rasio*((kumTitik[0][1]+kumTitik[1][1])/2+yplus)}" text-anchor="${anchor}" dominant-baseline="${baseline}" style="font-family:'Times New Roman', Times, serif; font-size:${ukuran}em; fill:${warna}">${label}</text>`;
-    return {kumTitik:kumTitik,label:label}
-}
-
-function geomSudut(variabelGeom,kumTitik,opsi={}){
-    let r = opsi.r || 1;
-    let tebalgaris = opsi.tebalgaris || 1;
-    let warnagaris = opsi.warnagaris || "black";
-    let isi = opsi.isi || "none";
-    let tampakisi = opsi.tampakisi || 1;
-    let tampakgaris = opsi.tampakgaris || 1;
-    let rotasi = opsi.rotasi || 0;
-    let busurbesar = opsi.busurbesar || 0;
-    let arah = opsi.arah || 1;
-    document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<path d="M ${variabelGeom.rasio*kumTitik[1][0]} ${variabelGeom.rasio*kumTitik[1][1]} L ${variabelGeom.rasio*(kumTitik[1][0]+r*(kumTitik[0][0]-kumTitik[1][0])/panjanggaris([kumTitik[0],kumTitik[1]]))} ${variabelGeom.rasio*(kumTitik[1][1]+r*(kumTitik[0][1]-kumTitik[1][1])/panjanggaris([kumTitik[0],kumTitik[1]]))} A ${variabelGeom.rasio*r} ${variabelGeom.rasio*r} ${rotasi} ${busurbesar} ${arah} ${variabelGeom.rasio*(kumTitik[1][0]+r*(kumTitik[2][0]-kumTitik[1][0])/panjanggaris([kumTitik[2],kumTitik[1]]))} ${variabelGeom.rasio*(kumTitik[1][1]+r*(kumTitik[2][1]-kumTitik[1][1])/panjanggaris([kumTitik[2],kumTitik[1]]))} z" stroke="${warnagaris}" fill="${isi}" fill-opacity="${tampakisi}" stroke-width="${tebalgaris}" stroke-opacity="${tampakgaris}"/>`;
-    return {kumTitik:kumTitik,r:r,warnagaris:warnagaris,tebalgaris:tebalgaris,isi:isi,tampakisi:tampakisi,tampakgaris:tampakgaris,rotasi,rotasi,busurbesar:busurbesar,arah:arah}
-}
-
-function geomSiku(variabelGeom,kumTitik=[],opsi={}){
-    let r = opsi.r || 1;
-    let tebalgaris = opsi.tebalgaris || 1;
-    let warnagaris = opsi.warnagaris || "black";
-    let isi = opsi.isi || "none";
-    let tampakisi = opsi.tampakisi || 1;
-    let tampakgaris = opsi.tampakgaris || 1;
-    let ti1x = kumTitik[0][0];
-    let ti1y = kumTitik[0][1];
-    let ti2x = kumTitik[1][0];
-    let ti2y = kumTitik[1][1];
-    let ti3x = kumTitik[2][0];
-    let ti3y = kumTitik[2][1];
-    let pjg1 = panjanggaris([kumTitik[0],kumTitik[1]]);
-    let pjg2 = panjanggaris([kumTitik[2],kumTitik[1]]);
-    let tiawal = [ti2x+r*(ti1x-ti2x)/pjg1,ti2y+r*(ti1y-ti2y)/pjg1];
-    let tiakh = [ti2x+r*(ti3x-ti2x)/pjg2,ti2y+r*(ti3y-ti2y)/pjg2];
-    let titeng = [(tiawal[0]+tiakh[0])/2,(tiawal[1]+tiakh[1])/2];
-    let tilu = [2*titeng[0]-kumTitik[1][0],2*titeng[1]-kumTitik[1][1]]
-    document.getElementById(variabelGeom.id+"_svg").innerHTML += String.raw`<polygon points="${variabelGeom.rasio*ti2x},${variabelGeom.rasio*ti2y} ${variabelGeom.rasio*tiawal[0]},${variabelGeom.rasio*tiawal[1]} ${variabelGeom.rasio*tilu[0]},${variabelGeom.rasio*tilu[1]} ${variabelGeom.rasio*(kumTitik[1][0]+r*(kumTitik[2][0]-kumTitik[1][0])/panjanggaris([kumTitik[2],kumTitik[1]]))},${variabelGeom.rasio*(kumTitik[1][1]+r*(kumTitik[2][1]-kumTitik[1][1])/panjanggaris([kumTitik[2],kumTitik[1]]))}" style="stroke:${warnagaris}; stroke-width:${tebalgaris}; fill:${isi}; opacity:${tampakisi}; stroke-opacity:${tampakgaris}"/>`;
-  }
